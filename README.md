@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WorkMind - Intelligent Work Recording Tool
 
-## Getting Started
+WorkMind is an AI-powered work recording and summary tool built with Next.js, designed to help users track their tasks, generate intelligent insights, and optimize their productivity.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### ✅ Completed Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Task Management**: Full CRUD operations for tasks with status tracking, priority levels, and time tracking
+- **Project Organization**: Create and manage projects to organize tasks
+- **AI-Powered Insights**: Generate intelligent summaries and task suggestions using OpenAI
+- **Responsive UI**: Clean, compact interface built with DaisyUI and Tailwind CSS
+- **Internationalization**: Support for English and Chinese languages
+- **Real-time Data**: React Query integration for efficient data fetching and caching
+- **Database Integration**: SQLite database with Prisma ORM for data persistence
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🎯 Core Functionality
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Dashboard**: Overview of task statistics, recent tasks, and quick actions
+2. **Task Management**: Create, edit, delete, and track tasks with various filters
+3. **AI Assistant**: Generate task suggestions and work summaries
+4. **Summary Reports**: Daily, weekly, and monthly productivity reports
+5. **Project Management**: Organize tasks into projects for better workflow
 
-## Learn More
+## 🛠 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4, DaisyUI (compact layout)
+- **State Management**: React Query (TanStack Query)
+- **Database**: SQLite with Prisma ORM
+- **AI Integration**: Vercel AI SDK with OpenAI
+- **Internationalization**: next-intl
+- **Package Manager**: pnpm

@@ -1,0 +1,83 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "open": "Open"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "projects": "Projects",
+    "summary": "Summary",
+    "settings": "Settings",
+    "agent": "AI Assistant"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "newTask": "New Task",
+    "taskTitle": "Task Title",
+    "taskDescription": "Task Description",
+    "status": "Status",
+    "priority": "Priority",
+    "project": "Project",
+    "tags": "Tags",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "duration": "Duration",
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "completed": "Completed",
+    "canceled": "Canceled",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "projects": {
+    "title": "Projects",
+    "newProject": "New Project",
+    "projectName": "Project Name",
+    "projectDescription": "Project Description"
+  },
+  "summary": {
+    "title": "Summary",
+    "daily": "Daily Report",
+    "weekly": "Weekly Report",
+    "monthly": "Monthly Report",
+    "generate": "Generate Report",
+    "regenerate": "Regenerate Report",
+    "totalTasks": "Total Tasks",
+    "completedTasks": "Completed Tasks",
+    "totalTime": "Total Time",
+    "averageTime": "Average Time"
+  },
+  "agent": {
+    "title": "AI Assistant",
+    "suggestions": "Suggestions",
+    "chat": "Chat",
+    "askQuestion": "Ask a question...",
+    "send": "Send",
+    "analyzing": "Analyzing...",
+    "noSuggestions": "No suggestions available"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "profile": "Profile"
+  }
+}
