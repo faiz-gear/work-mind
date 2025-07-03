@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Mind - Tasks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            line-height: 1.5;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #f7f6f3;
+            border-right: 1px solid #e9e9e7;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #6b6b6b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e9e9e7;
+            color: #2d2d2d;
+        }
+        
+        .nav-item::before {
+            content: "📊";
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-item[href*="dashboard"]::before { content: "📊"; }
+        .nav-item[href*="tasks"]::before { content: "✅"; }
+        .nav-item[href*="summary"]::before { content: "📈"; }
+        .nav-item[href*="agent"]::before { content: "🤖"; }
+        .nav-item[href*="settings"]::before { content: "⚙️"; }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        /* Filters and controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .filter-select, .search-input {
+            padding: 6px 12px;
+            border: 1px solid #e9e9e7;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: #ffffff;
+        }
+        
+        .search-input {
+            width: 200px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: #2383e2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6bb8;
+        }
+        
+        .btn-secondary {
+            background: #ffffff;
+            color: #6b6b6b;
+            border: 1px solid #e9e9e7;
+        }
+        
+        .btn-secondary:hover {
+            background: #f7f6f3;
+        }
+        
+        /* Task list */
+        .task-list {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .task-header {
+            display: grid;
+            grid-template-columns: 40px 1fr 120px 100px 80px 40px;
+            gap: 16px;
+            padding: 12px 16px;
+            background: #f7f6f3;
+            border-bottom: 1px solid #e9e9e7;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6b6b6b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .task-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 120px 100px 80px 40px;
+            gap: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f1ef;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .task-row:hover {
+            background: #f7f6f3;
+        }
+        
+        .task-row:last-child {
+            border-bottom: none;
+        }
+        
+        .task-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #d3d3d1;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .task-checkbox.completed {
+            background: #2383e2;
+            border-color: #2383e2;
+            position: relative;
+        }
+        
+        .task-checkbox.completed::after {
+            content: "✓";
+            color: white;
+            font-size: 10px;
+            position: absolute;
+            top: -1px;
+            left: 2px;
+        }
+        
+        .task-title {
+            font-size: 0.9rem;
+            color: #2d2d2d;
+            cursor: pointer;
+        }
+        
+        .task-title:hover {
+            color: #2383e2;
+        }
+        
+        .task-project {
+            font-size: 0.8rem;
+            color: #6b6b6b;
+            background: #f1f1ef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .task-status {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-in-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .task-duration {
+            font-size: 0.8rem;
+            color: #6b6b6b;
+            text-align: center;
+        }
+        
+        .task-actions {
+            position: relative;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: #6b6b6b;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        
+        .action-btn:hover {
+            background: #e9e9e7;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b6b6b;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2d2d2d;
+            margin-bottom: 6px;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e9e9e7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .task-header, .task-row {
+                grid-template-columns: 30px 1fr 80px;
+                gap: 8px;
+            }
+            
+            .task-header span:nth-child(n+4),
+            .task-row > *:nth-child(n+4) {
+                display: none;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Work Mind</h1>
+        </div>
+        <nav>
+            <a href="dashboard-prototype.html" class="nav-item">Dashboard</a>
+            <a href="#" class="nav-item active">Tasks</a>
+            <a href="summary-prototype.html" class="nav-item">Summary</a>
+            <a href="agent-prototype.html" class="nav-item">AI Agent</a>
+            <a href="settings-prototype.html" class="nav-item">Settings</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Tasks</h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openModal()">+ New Task</button>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="filter-group">
+                <label>Status:</label>
+                <select class="filter-select">
+                    <option>All</option>
+                    <option>Pending</option>
+                    <option>In Progress</option>
+                    <option>Completed</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Project:</label>
+                <select class="filter-select">
+                    <option>All Projects</option>
+                    <option>Website Redesign</option>
+                    <option>Mobile App</option>
+                    <option>Documentation</option>
+                </select>
+            </div>
+            <input type="text" class="search-input" placeholder="Search tasks...">
+        </div>
+        
+        <!-- Task List -->
+        <div class="task-list">
+            <div class="task-header">
+                <span></span>
+                <span>Task</span>
+                <span>Project</span>
+                <span>Status</span>
+                <span>Duration</span>
+                <span></span>
+            </div>
+            
+            <div class="task-row">
+                <div class="task-checkbox completed"></div>
+                <div class="task-title">Complete project documentation</div>
+                <div class="task-project">Documentation</div>
+                <div class="task-status status-completed">Completed</div>
+                <div class="task-duration">2h 30m</div>
+                <button class="action-btn">⋯</button>
+            </div>
+            
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="task-title">Review code changes</div>
+                <div class="task-project">Website Redesign</div>
+                <div class="task-status status-in-progress">In Progress</div>
+                <div class="task-duration">1h 15m</div>
+                <button class="action-btn">⋯</button>
+            </div>
+            
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="task-title">Team meeting preparation</div>
+                <div class="task-project">Mobile App</div>
+                <div class="task-status status-pending">Pending</div>
+                <div class="task-duration">45m</div>
+                <button class="action-btn">⋯</button>
+            </div>
+            
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="task-title">Update project timeline</div>
+                <div class="task-project">Website Redesign</div>
+                <div class="task-status status-pending">Pending</div>
+                <div class="task-duration">30m</div>
+                <button class="action-btn">⋯</button>
+            </div>
+            
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="task-title">Design system components</div>
+                <div class="task-project">Mobile App</div>
+                <div class="task-status status-in-progress">In Progress</div>
+                <div class="task-duration">3h 20m</div>
+                <button class="action-btn">⋯</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Task</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-input" placeholder="Enter task title">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" placeholder="Enter task description"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Project</label>
+                    <select class="form-select">
+                        <option>Select project</option>
+                        <option>Website Redesign</option>
+                        <option>Mobile App</option>
+                        <option>Documentation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select">
+                        <option>Pending</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function openModal() {
+            document.getElementById('taskModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('show');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('taskModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

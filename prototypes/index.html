@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Mind - Prototype Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d2d2d;
+            margin-bottom: 16px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #6b6b6b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .prototype-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .prototype-card {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .prototype-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .prototype-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+        }
+        
+        .prototype-card p {
+            color: #6b6b6b;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .prototype-card a {
+            display: inline-block;
+            background: #2383e2;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        
+        .prototype-card a:hover {
+            background: #1a6bb8;
+        }
+        
+        .features {
+            background: #f7f6f3;
+            border-radius: 8px;
+            padding: 32px;
+            margin-top: 40px;
+        }
+        
+        .features h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 20px;
+        }
+        
+        .features ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .features li {
+            display: flex;
+            align-items: center;
+            color: #6b6b6b;
+            font-size: 0.95rem;
+        }
+        
+        .features li::before {
+            content: "✓";
+            color: #2383e2;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .prototype-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Work Mind Prototypes</h1>
+            <p>Interactive HTML prototypes showcasing the intelligent work recording and summary tool interface, designed with Notion-inspired clean aesthetics.</p>
+        </div>
+        
+        <div class="prototype-grid">
+            <div class="prototype-card">
+                <h3>Dashboard</h3>
+                <p>Main dashboard with overview of tasks, recent activity, and quick actions. Features compact layout with key metrics and navigation.</p>
+                <a href="dashboard-prototype.html">View Prototype</a>
+            </div>
+            
+            <div class="prototype-card">
+                <h3>Task Management</h3>
+                <p>Task list view with filtering, sorting, and CRUD operations. Includes task creation form and status management.</p>
+                <a href="tasks-prototype.html">View Prototype</a>
+            </div>
+            
+            <div class="prototype-card">
+                <h3>Task Details</h3>
+                <p>Individual task view with editing capabilities, time tracking, tags, and project association.</p>
+                <a href="task-detail-prototype.html">View Prototype</a>
+            </div>
+            
+            <div class="prototype-card">
+                <h3>AI Summary Reports</h3>
+                <p>Daily, weekly, and monthly summary reports generated by AI with visualizations and insights.</p>
+                <a href="summary-prototype.html">View Prototype</a>
+            </div>
+            
+            <div class="prototype-card">
+                <h3>AI Assistant</h3>
+                <p>Intelligent agent providing suggestions, predictions, and priority recommendations based on work patterns.</p>
+                <a href="agent-prototype.html">View Prototype</a>
+            </div>
+            
+            <div class="prototype-card">
+                <h3>Settings</h3>
+                <p>User preferences, internationalization settings, and AI configuration options.</p>
+                <a href="settings-prototype.html">View Prototype</a>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h2>Key Features Demonstrated</h2>
+            <ul>
+                <li>Notion-inspired clean design</li>
+                <li>Compact layout with daisyUI sm sizing</li>
+                <li>Responsive mobile-first approach</li>
+                <li>Task management with CRUD operations</li>
+                <li>AI-powered summary generation</li>
+                <li>Intelligent agent suggestions</li>
+                <li>Multi-language support (EN/ZH)</li>
+                <li>Data visualization with charts</li>
+                <li>Project and tag organization</li>
+                <li>Time tracking capabilities</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

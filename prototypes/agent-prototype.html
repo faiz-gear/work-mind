@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Mind - AI Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            line-height: 1.5;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #f7f6f3;
+            border-right: 1px solid #e9e9e7;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #6b6b6b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e9e9e7;
+            color: #2d2d2d;
+        }
+        
+        .nav-item::before {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-item[href*="dashboard"]::before { content: "📊"; }
+        .nav-item[href*="tasks"]::before { content: "✅"; }
+        .nav-item[href*="summary"]::before { content: "📈"; }
+        .nav-item[href*="agent"]::before { content: "🤖"; }
+        .nav-item[href*="settings"]::before { content: "⚙️"; }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        /* Agent layout */
+        .agent-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+            height: calc(100vh - 140px);
+        }
+        
+        /* Chat interface */
+        .chat-container {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e9e9e7;
+            background: #f7f6f3;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .chat-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-header h3::before {
+            content: "🤖";
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .message.agent .message-avatar {
+            background: #2383e2;
+            color: white;
+        }
+        
+        .message.user .message-avatar {
+            background: #6b6b6b;
+            color: white;
+        }
+        
+        .message-content {
+            background: #f7f6f3;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: #2383e2;
+            color: white;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: #6b6b6b;
+            margin-top: 4px;
+        }
+        
+        .chat-input-container {
+            padding: 16px 20px;
+            border-top: 1px solid #e9e9e7;
+            background: #ffffff;
+            border-radius: 0 0 8px 8px;
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e9e9e7;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            resize: none;
+            max-height: 100px;
+            min-height: 40px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: #2383e2;
+        }
+        
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #2383e2;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .send-btn:hover {
+            background: #1a6bb8;
+        }
+        
+        .send-btn:disabled {
+            background: #d3d3d1;
+            cursor: not-allowed;
+        }
+        
+        /* Suggestions panel */
+        .suggestions-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .panel-section {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e9e9e7;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .suggestion-item:hover {
+            background: #f7f6f3;
+            border-color: #2383e2;
+        }
+        
+        .suggestion-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .suggestion-icon {
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+        
+        .suggestion-content {
+            flex: 1;
+        }
+        
+        .suggestion-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d2d2d;
+            margin-bottom: 4px;
+        }
+        
+        .suggestion-desc {
+            font-size: 0.8rem;
+            color: #6b6b6b;
+            line-height: 1.3;
+        }
+        
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .priority-high {
+            background: #fee;
+            color: #c53030;
+        }
+        
+        .priority-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .priority-low {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .quick-action-btn {
+            padding: 6px 12px;
+            border: 1px solid #e9e9e7;
+            background: #ffffff;
+            color: #6b6b6b;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-action-btn:hover {
+            background: #f7f6f3;
+            border-color: #2383e2;
+            color: #2383e2;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #6b6b6b;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        
+        .typing-indicator.show {
+            display: flex;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .typing-dot {
+            width: 4px;
+            height: 4px;
+            background: #6b6b6b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .agent-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .suggestions-panel {
+                order: -1;
+            }
+            
+            .chat-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Work Mind</h1>
+        </div>
+        <nav>
+            <a href="dashboard-prototype.html" class="nav-item">Dashboard</a>
+            <a href="tasks-prototype.html" class="nav-item">Tasks</a>
+            <a href="summary-prototype.html" class="nav-item">Summary</a>
+            <a href="#" class="nav-item active">AI Agent</a>
+            <a href="settings-prototype.html" class="nav-item">Settings</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>AI Assistant</h2>
+        </div>
+        
+        <div class="agent-layout">
+            <!-- Chat Interface -->
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3>Chat with AI Assistant</h3>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message agent">
+                        <div class="message-avatar">🤖</div>
+                        <div>
+                            <div class="message-content">
+                                Hello! I'm your AI work assistant. I can help you analyze your productivity patterns, 
+                                suggest task priorities, and provide insights based on your work history. 
+                                What would you like to know?
+                            </div>
+                            <div class="message-time">10:30 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message user">
+                        <div class="message-avatar">👤</div>
+                        <div>
+                            <div class="message-content">
+                                What should I focus on today?
+                            </div>
+                            <div class="message-time">10:32 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="message agent">
+                        <div class="message-avatar">🤖</div>
+                        <div>
+                            <div class="message-content">
+                                Based on your work patterns and current projects, I recommend focusing on:
+                                <br><br>
+                                1. <strong>Complete project documentation</strong> - This is due soon and you're most productive with writing tasks in the morning
+                                <br>
+                                2. <strong>Review code changes</strong> - High priority and fits well with your afternoon focus time
+                                <br>
+                                3. <strong>Mobile app design</strong> - This project is slightly behind schedule
+                                <br><br>
+                                Would you like me to create a detailed schedule for today?
+                            </div>
+                            <div class="message-time">10:33 AM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-avatar">🤖</div>
+                        <span>AI is thinking</span>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <textarea 
+                            class="chat-input" 
+                            placeholder="Ask me anything about your work patterns, productivity, or task priorities..."
+                            id="chatInput"
+                            rows="1"
+                        ></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            ➤
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Suggestions Panel -->
+            <div class="suggestions-panel">
+                <div class="panel-section">
+                    <h4>🎯 Priority Suggestions</h4>
+                    
+                    <div class="suggestion-item" onclick="addToChat('Tell me more about the documentation task')">
+                        <div class="suggestion-icon">📝</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Complete project documentation</div>
+                            <div class="suggestion-desc">Due in 2 days • Best time: 9-11 AM</div>
+                        </div>
+                        <div class="priority-badge priority-high">High</div>
+                    </div>
+                    
+                    <div class="suggestion-item" onclick="addToChat('How should I approach the code review?')">
+                        <div class="suggestion-icon">🔍</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Review code changes</div>
+                            <div class="suggestion-desc">Estimated 1h 15m • Good for afternoon</div>
+                        </div>
+                        <div class="priority-badge priority-medium">Medium</div>
+                    </div>
+                    
+                    <div class="suggestion-item" onclick="addToChat('What is the status of mobile app project?')">
+                        <div class="suggestion-icon">📱</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Mobile app design catch-up</div>
+                            <div class="suggestion-desc">Project 20% behind schedule</div>
+                        </div>
+                        <div class="priority-badge priority-medium">Medium</div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h4>💡 Quick Insights</h4>
+                    
+                    <div class="suggestion-item" onclick="addToChat('Show me my productivity patterns')">
+                        <div class="suggestion-icon">📊</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Peak productivity: 9-11 AM</div>
+                            <div class="suggestion-desc">You complete 60% of important tasks during this time</div>
+                        </div>
+                    </div>
+                    
+                    <div class="suggestion-item" onclick="addToChat('How can I improve my time estimates?')">
+                        <div class="suggestion-icon">⏱️</div>
+                        <div class="suggestion-content">
+                            <div class="suggestion-title">Research tasks take 20% longer</div>
+                            <div class="suggestion-desc">Consider adding buffer time for research work</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <h4>🚀 Quick Actions</h4>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="addToChat('Create a schedule for today')">📅 Plan Today</button>
+                        <button class="quick-action-btn" onclick="addToChat('Analyze my work patterns')">📈 Analyze Patterns</button>
+                        <button class="quick-action-btn" onclick="addToChat('Suggest break times')">☕ Break Times</button>
+                        <button class="quick-action-btn" onclick="addToChat('Review project status')">📋 Project Status</button>
+                        <button class="quick-action-btn" onclick="addToChat('Optimize my workflow')">⚡ Optimize Workflow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function addToChat(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                hideTyping();
+                addMessage(getAIResponse(message), 'agent');
+            }, 2000);
+        }
+        
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${type === 'user' ? '👤' : '🤖'}</div>
+                <div>
+                    <div class="message-content">${content}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function showTyping() {
+            document.getElementById('typingIndicator').classList.add('show');
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+        
+        function hideTyping() {
+            document.getElementById('typingIndicator').classList.remove('show');
+        }
+        
+        function getAIResponse(message) {
+            const responses = {
+                'create a schedule for today': 'Based on your productivity patterns, here\'s an optimized schedule:<br><br><strong>9:00-11:00 AM:</strong> Complete project documentation (high focus time)<br><strong>11:00-11:15 AM:</strong> Break<br><strong>11:15 AM-12:30 PM:</strong> Review code changes<br><strong>12:30-1:30 PM:</strong> Lunch<br><strong>1:30-3:00 PM:</strong> Mobile app design work<br><strong>3:00-3:15 PM:</strong> Break<br><strong>3:15-4:30 PM:</strong> Administrative tasks<br><br>This schedule aligns with your peak productivity hours!',
+                'show me my productivity patterns': 'Here are your key productivity patterns:<br><br>📈 <strong>Peak Hours:</strong> 9-11 AM (60% of important tasks completed)<br>📊 <strong>Optimal Session Length:</strong> 90-120 minutes<br>⏰ <strong>Best Break Frequency:</strong> Every 90 minutes<br>📝 <strong>Morning Tasks:</strong> Writing, documentation, planning<br>💻 <strong>Afternoon Tasks:</strong> Coding, reviews, technical work<br><br>Your completion rate is highest on Tuesdays and Wednesdays!',
+                'analyze my work patterns': 'Your work pattern analysis shows:<br><br>🎯 <strong>Task Completion:</strong> 85% average rate<br>⏱️ <strong>Time Estimation:</strong> 90% accurate (research tasks +20%)<br>📅 <strong>Weekly Distribution:</strong> Most productive mid-week<br>🏷️ <strong>Tag Performance:</strong> "high-priority" tasks: 95% completion<br>📊 <strong>Project Balance:</strong> Good distribution across 3 active projects<br><br>Recommendation: Continue current patterns, add buffer time for research tasks.',
+                default: 'I understand you\'re asking about work optimization. Based on your recent activity, I can help you with task prioritization, schedule planning, or productivity analysis. What specific aspect would you like me to focus on?'
+            };
+            
+            const key = message.toLowerCase();
+            return responses[key] || responses.default;
+        }
+        
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+        
+        // Send on Enter (but not Shift+Enter)
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

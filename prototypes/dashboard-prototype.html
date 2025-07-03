@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Mind - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            line-height: 1.5;
+        }
+        
+        /* Notion-inspired sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #f7f6f3;
+            border-right: 1px solid #e9e9e7;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #6b6b6b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e9e9e7;
+            color: #2d2d2d;
+        }
+        
+        .nav-item::before {
+            content: "📊";
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-item[href*="tasks"]::before { content: "✅"; }
+        .nav-item[href*="summary"]::before { content: "📈"; }
+        .nav-item[href*="agent"]::before { content: "🤖"; }
+        .nav-item[href*="settings"]::before { content: "⚙️"; }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .lang-switcher {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: #6b6b6b;
+            cursor: pointer;
+        }
+        
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6b6b6b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d2d2d;
+            margin-bottom: 4px;
+        }
+        
+        .stat-card .change {
+            font-size: 0.8rem;
+            color: #2383e2;
+        }
+        
+        /* Content sections */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        .section {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 16px;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f1ef;
+        }
+        
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        .task-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #d3d3d1;
+            border-radius: 3px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .task-title {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #2d2d2d;
+        }
+        
+        .task-time {
+            font-size: 0.8rem;
+            color: #6b6b6b;
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: #f7f6f3;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b6b6b;
+            font-size: 0.9rem;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: #2383e2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6bb8;
+        }
+        
+        .btn-secondary {
+            background: #ffffff;
+            color: #6b6b6b;
+            border: 1px solid #e9e9e7;
+        }
+        
+        .btn-secondary:hover {
+            background: #f7f6f3;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Work Mind</h1>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active">Dashboard</a>
+            <a href="tasks-prototype.html" class="nav-item">Tasks</a>
+            <a href="summary-prototype.html" class="nav-item">Summary</a>
+            <a href="agent-prototype.html" class="nav-item">AI Agent</a>
+            <a href="settings-prototype.html" class="nav-item">Settings</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Dashboard</h2>
+            <select class="lang-switcher">
+                <option>English</option>
+                <option>中文</option>
+            </select>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Tasks</h3>
+                <div class="value">24</div>
+                <div class="change">+3 this week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <div class="value">18</div>
+                <div class="change">75% completion rate</div>
+            </div>
+            <div class="stat-card">
+                <h3>Hours Tracked</h3>
+                <div class="value">42.5</div>
+                <div class="change">+5.2 from last week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Projects</h3>
+                <div class="value">3</div>
+                <div class="change">2 due this week</div>
+            </div>
+        </div>
+        
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <div class="section">
+                <h3>Recent Tasks</h3>
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-title">Complete project documentation</div>
+                    <div class="task-time">2h 30m</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-title">Review code changes</div>
+                    <div class="task-time">1h 15m</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-title">Team meeting preparation</div>
+                    <div class="task-time">45m</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-checkbox"></div>
+                    <div class="task-title">Update project timeline</div>
+                    <div class="task-time">30m</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="btn btn-primary">+ New Task</button>
+                    <button class="btn btn-secondary">View All</button>
+                </div>
+            </div>
+            
+            <div>
+                <div class="section">
+                    <h3>Weekly Progress</h3>
+                    <div class="chart-placeholder">
+                        📊 Chart: Task completion over time
+                    </div>
+                </div>
+                
+                <div class="section" style="margin-top: 16px;">
+                    <h3>AI Insights</h3>
+                    <p style="font-size: 0.9rem; color: #6b6b6b; margin-bottom: 12px;">
+                        Based on your work patterns, you're most productive between 9-11 AM. Consider scheduling important tasks during this time.
+                    </p>
+                    <button class="btn btn-secondary">Get More Insights</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

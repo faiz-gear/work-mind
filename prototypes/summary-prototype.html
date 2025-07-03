@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Mind - AI Summary Reports</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            line-height: 1.5;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: #f7f6f3;
+            border-right: 1px solid #e9e9e7;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            color: #6b6b6b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: #e9e9e7;
+            color: #2d2d2d;
+        }
+        
+        .nav-item::before {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .nav-item[href*="dashboard"]::before { content: "📊"; }
+        .nav-item[href*="tasks"]::before { content: "✅"; }
+        .nav-item[href*="summary"]::before { content: "📈"; }
+        .nav-item[href*="agent"]::before { content: "🤖"; }
+        .nav-item[href*="settings"]::before { content: "⚙️"; }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        /* Report type tabs */
+        .report-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: #f7f6f3;
+            padding: 4px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6b6b6b;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-btn.active {
+            background: #ffffff;
+            color: #2d2d2d;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .date-picker {
+            padding: 8px 12px;
+            border: 1px solid #e9e9e7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #ffffff;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: #2383e2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6bb8;
+        }
+        
+        .btn-secondary {
+            background: #ffffff;
+            color: #6b6b6b;
+            border: 1px solid #e9e9e7;
+        }
+        
+        .btn-secondary:hover {
+            background: #f7f6f3;
+        }
+        
+        /* Loading state */
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: #6b6b6b;
+            font-size: 0.9rem;
+        }
+        
+        .loading.show {
+            display: flex;
+        }
+        
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e9e9e7;
+            border-top: 2px solid #2383e2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Report content */
+        .report-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+        }
+        
+        .report-main {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .report-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .report-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 8px;
+        }
+        
+        .report-meta {
+            color: #6b6b6b;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e9e9e7;
+        }
+        
+        .report-section {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+        }
+        
+        .report-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #2d2d2d;
+            margin-bottom: 16px;
+        }
+        
+        .highlight-box {
+            background: #f7f6f3;
+            border-left: 4px solid #2383e2;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        
+        .stats-card {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f1ef;
+        }
+        
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6b6b6b;
+        }
+        
+        .stat-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background: #f7f6f3;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b6b6b;
+            font-size: 0.9rem;
+            margin: 16px 0;
+        }
+        
+        .recommendations {
+            background: #ffffff;
+            border: 1px solid #e9e9e7;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .recommendations h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 0;
+            font-size: 0.85rem;
+            color: #6b6b6b;
+        }
+        
+        .recommendation-item::before {
+            content: "💡";
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            
+            .report-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .report-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>Work Mind</h1>
+        </div>
+        <nav>
+            <a href="dashboard-prototype.html" class="nav-item">Dashboard</a>
+            <a href="tasks-prototype.html" class="nav-item">Tasks</a>
+            <a href="#" class="nav-item active">Summary</a>
+            <a href="agent-prototype.html" class="nav-item">AI Agent</a>
+            <a href="settings-prototype.html" class="nav-item">Settings</a>
+        </nav>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>AI Summary Reports</h2>
+        </div>
+        
+        <!-- Report Type Tabs -->
+        <div class="report-tabs">
+            <button class="tab-btn" onclick="switchTab('daily')">Daily</button>
+            <button class="tab-btn active" onclick="switchTab('weekly')">Weekly</button>
+            <button class="tab-btn" onclick="switchTab('monthly')">Monthly</button>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <input type="date" class="date-picker" value="2024-03-15">
+            <button class="btn btn-primary" onclick="generateReport()">🤖 Generate AI Report</button>
+            <button class="btn btn-secondary">📄 Export PDF</button>
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>AI is analyzing your work patterns...</span>
+            </div>
+        </div>
+        
+        <!-- Report Container -->
+        <div class="report-container">
+            <div class="report-main">
+                <h1 class="report-title">Weekly Work Summary</h1>
+                <div class="report-meta">
+                    Generated on March 15, 2024 • Week of March 11-17, 2024 • Powered by AI
+                </div>
+                
+                <div class="report-section">
+                    <h3 class="section-title">📊 Overview</h3>
+                    <p class="report-text">
+                        This week you completed <strong>18 tasks</strong> across <strong>3 active projects</strong>, 
+                        logging a total of <strong>42.5 hours</strong> of productive work. Your completion rate 
+                        increased by 15% compared to last week, showing excellent progress.
+                    </p>
+                    
+                    <div class="highlight-box">
+                        <strong>Key Achievement:</strong> You successfully completed the project documentation 
+                        milestone ahead of schedule, demonstrating strong focus and time management skills.
+                    </div>
+                </div>
+                
+                <div class="report-section">
+                    <h3 class="section-title">📈 Productivity Analysis</h3>
+                    <p class="report-text">
+                        Your most productive hours were between <strong>9:00-11:00 AM</strong>, where you 
+                        completed 60% of your high-priority tasks. The afternoon sessions (2:00-4:00 PM) 
+                        showed consistent performance for routine tasks.
+                    </p>
+                    
+                    <div class="chart-placeholder">
+                        📊 Chart: Hourly productivity distribution
+                    </div>
+                    
+                    <p class="report-text">
+                        Task completion patterns indicate you work best on focused, single-task sessions 
+                        lasting 90-120 minutes. Consider implementing the Pomodoro technique for shorter tasks.
+                    </p>
+                </div>
+                
+                <div class="report-section">
+                    <h3 class="section-title">🎯 Project Progress</h3>
+                    <p class="report-text">
+                        <strong>Documentation Project:</strong> 85% complete (ahead of schedule)<br>
+                        <strong>Website Redesign:</strong> 60% complete (on track)<br>
+                        <strong>Mobile App:</strong> 40% complete (slightly behind)
+                    </p>
+                    
+                    <div class="highlight-box">
+                        <strong>Recommendation:</strong> Consider allocating more time to the Mobile App project 
+                        in the coming week to maintain overall project timeline.
+                    </div>
+                </div>
+                
+                <div class="report-section">
+                    <h3 class="section-title">🔍 Insights & Patterns</h3>
+                    <p class="report-text">
+                        AI analysis reveals that you're most efficient when working on documentation and 
+                        writing tasks in the morning, while coding and technical tasks perform better 
+                        in the afternoon. Your break patterns suggest optimal 15-minute breaks every 90 minutes.
+                    </p>
+                    
+                    <p class="report-text">
+                        Tag analysis shows "high-priority" tasks have a 95% completion rate, while 
+                        "research" tagged tasks tend to take 20% longer than estimated.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="report-sidebar">
+                <div class="stats-card">
+                    <h4>📊 Week Statistics</h4>
+                    <div class="stat-item">
+                        <span class="stat-label">Tasks Completed</span>
+                        <span class="stat-value">18</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Hours Tracked</span>
+                        <span class="stat-value">42.5h</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Avg. Task Duration</span>
+                        <span class="stat-value">2h 22m</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Completion Rate</span>
+                        <span class="stat-value">85%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Projects Active</span>
+                        <span class="stat-value">3</span>
+                    </div>
+                </div>
+                
+                <div class="chart-placeholder">
+                    📊 Task Distribution by Project
+                </div>
+                
+                <div class="recommendations">
+                    <h4>🤖 AI Recommendations</h4>
+                    <div class="recommendation-item">
+                        Schedule important tasks between 9-11 AM for optimal performance
+                    </div>
+                    <div class="recommendation-item">
+                        Take breaks every 90 minutes to maintain focus
+                    </div>
+                    <div class="recommendation-item">
+                        Allocate more time for research tasks (add 20% buffer)
+                    </div>
+                    <div class="recommendation-item">
+                        Consider batching similar tasks together
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchTab(type) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update report title and content based on type
+            const title = document.querySelector('.report-title');
+            const meta = document.querySelector('.report-meta');
+            
+            switch(type) {
+                case 'daily':
+                    title.textContent = 'Daily Work Summary';
+                    meta.textContent = 'Generated on March 15, 2024 • Today • Powered by AI';
+                    break;
+                case 'weekly':
+                    title.textContent = 'Weekly Work Summary';
+                    meta.textContent = 'Generated on March 15, 2024 • Week of March 11-17, 2024 • Powered by AI';
+                    break;
+                case 'monthly':
+                    title.textContent = 'Monthly Work Summary';
+                    meta.textContent = 'Generated on March 15, 2024 • March 2024 • Powered by AI';
+                    break;
+            }
+        }
+        
+        function generateReport() {
+            const loading = document.getElementById('loadingIndicator');
+            const generateBtn = event.target;
+            
+            // Show loading state
+            loading.classList.add('show');
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                loading.classList.remove('show');
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🤖 Generate AI Report';
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    font-size: 0.9rem;
+                    z-index: 1000;
+                `;
+                successMsg.textContent = 'Report generated successfully!';
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    successMsg.remove();
+                }, 3000);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
