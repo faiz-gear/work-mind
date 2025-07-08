@@ -36,7 +36,7 @@ const TaskListHeader = ({
   const handleSort = (field: TaskSortOptions['field']) => {
     const newDirection = sortOptions?.field === field && sortOptions?.direction === 'asc' ? 'desc' : 'asc';
     onSort?.({ field, direction: newDirection });
-    setShowSortMenu(false);
+    // setShowSortMenu(false); // Commented out since showSortMenu state is not used
   };
 
   return (
@@ -259,7 +259,11 @@ export const TaskList = forwardRef<HTMLDivElement, TaskListProps>(
           return sortOptions.direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
         }
 
-        return sortOptions.direction === 'asc' ? aValue - bValue : bValue - aValue;
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortOptions.direction === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+
+        return 0;
       });
 
       return sorted;
