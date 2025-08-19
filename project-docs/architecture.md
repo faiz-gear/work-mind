@@ -1,8 +1,6 @@
-
-
 我将为您生成完整的架构文档。由于内容较长，我将以一个完整的Markdown文档形式呈现，您可以复制保存为文件。
 
-```markdown
+````markdown
 # 智能工作记录与总结小工具 Fullstack Architecture Document
 
 ## 1. Introduction
@@ -12,24 +10,29 @@ This document outlines the complete fullstack architecture for 智能工作记�
 This unified approach combines what would traditionally be separate backend and frontend architecture documents, streamlining the development process for modern fullstack applications where these concerns are increasingly intertwined.
 
 ### Starter Template or Existing Project
+
 N/A - Greenfield project
 
 ### Change Log
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| [Current Date] | 1.0 | Initial fullstack architecture creation | Winston (Architect) |
+
+| Date           | Version | Description                             | Author              |
+| -------------- | ------- | --------------------------------------- | ------------------- |
+| [Current Date] | 1.0     | Initial fullstack architecture creation | Winston (Architect) |
 
 ## 2. High Level Architecture
 
 ### Technical Summary
+
 本系统采用现代化的全栈架构，基于Next.js App Router构建，结合Supabase作为后端即服务（BaaS）平台。前端使用React和Chakra UI实现响应式用户界面，后端通过Next.js API Routes提供RESTful API服务。系统采用Jamstack架构模式，实现高性能、可扩展性和安全性。通过Vercel AI SDK集成多个AI服务提供商，支持智能工作记录总结功能。整体架构设计注重用户体验、开发效率和运维便利性，完全满足PRD中定义的功能和非功能性需求。
 
 ### Platform and Infrastructure Choice
+
 **Platform:** Vercel + Supabase
 **Key Services:** Vercel (前端部署、边缘网络、函数计算), Supabase (PostgreSQL数据库、认证、实时功能、存储), Vercel AI SDK (AI服务集成)
 **Deployment Host and Regions:** Vercel全球边缘网络，Supabase多区域部署（根据用户地理位置选择最近的区域）
 
 **选择理由：**
+
 - **开发效率**：Vercel和Supabase提供开箱即用的解决方案，大幅减少基础设施配置时间
 - **技术栈一致性**：与PRD中指定的Next.js、Supabase、Vercel AI SDK完美匹配
 - **成本效益**：免费层和按需付费模式，适合项目初期和成长阶段
@@ -37,21 +40,25 @@ N/A - Greenfield project
 - **维护简便**：托管服务减少运维负担，团队可专注于业务逻辑开发
 
 ### Repository Structure
+
 **Structure:** Monorepo
 **Monorepo Tool:** Turborepo
-**Package Organization:** 
+**Package Organization:**
+
 - `apps/` 包含前端应用和API服务
 - `packages/` 包含共享类型、工具和UI组件
 - `infrastructure/` 包含基础设施即代码配置
 - `docs/` 包含项目文档
 
 **选择理由：**
+
 - **代码共享**：前端和后端可以共享TypeScript类型和工具函数
 - **依赖管理**：统一管理依赖版本，避免冲突
 - **开发体验**：单个仓库中同时开发前端和后端，提高协作效率
 - **构建优化**：Turborepo支持并行构建和智能缓存，提升构建速度
 
 ### High Level Architecture Diagram
+
 ```mermaid
 graph TD
     A[用户设备] --> B[浏览器/移动端]
@@ -76,8 +83,10 @@ graph TD
     D --> U[React Query缓存]
     C --> V[监控和日志]
 ```
+````
 
 ### Architectural Patterns
+
 - **Jamstack Architecture:** 静态站点生成与无服务器API结合 - _Rationale:_ 为内容密集型应用提供最佳性能和可扩展性
 - **组件化UI:** 可复用的React组件与TypeScript - _Rationale:_ 在大型代码库中保持可维护性和类型安全
 - **Repository Pattern:** 抽象数据访问逻辑 - _Rationale:_ 支持测试和未来数据库迁移的灵活性
@@ -90,36 +99,38 @@ graph TD
 
 ### Technology Stack Table
 
-| Category | Technology | Version | Purpose | Rationale |
-|----------|------------|---------|---------|-----------|
-| Frontend Language | TypeScript | 5.0+ | 类型安全的JavaScript开发 | 提供静态类型检查，提高代码质量和开发效率，与React完美集成 |
-| Frontend Framework | Next.js | 14+ | React全栈框架 | App Router提供最佳性能和SEO，支持SSR/SSG，与Vercel部署无缝集成 |
-| UI Component Library | Chakra UI | 2.8+ | 可访问的UI组件库 | 提供开箱即用的可访问组件，支持主题定制，与Tailwind CSS兼容 |
-| State Management | React Query (TanStack Query) | 5.0+ | 服务器状态管理 | 优化数据获取、缓存和同步，简化API调用逻辑，提供自动重试和缓存策略 |
-| Backend Language | TypeScript | 5.0+ | 类型安全的后端开发 | 与前端共享类型定义，确保API接口类型安全 |
-| Backend Framework | Next.js API Routes | 14+ | 无服务器API服务 | 与前端共享代码库，简化部署，自动扩展，支持边缘函数 |
-| API Style | RESTful API | - | 标准化API接口 | 简单直观，广泛支持，易于理解和实现，适合CRUD操作 |
-| Database | Supabase (PostgreSQL) | 15+ | 关系型数据库服务 | 提供完整的PostgreSQL功能，实时功能，自动扩展，内置认证和存储 |
-| Cache | Redis (via Supabase) | 7+ | 内存数据缓存 | 提高性能，减少数据库负载，支持会话存储和实时数据 |
-| File Storage | Supabase Storage | - | 文件存储服务 | 与数据库集成，提供安全的文件上传、下载和CDN加速 |
-| Authentication | Supabase Auth | - | 用户认证和授权 | 开箱即用的认证功能，支持多种提供商，JWT令牌管理 |
-| Frontend Testing | Jest + React Testing Library | 29+ | 前端单元和集成测试 | Jest提供测试框架，RTL提供React组件测试，确保UI组件质量 |
-| Backend Testing | Jest + Supertest | 29+ | 后端API测试 | Jest提供测试框架，Supertest简化HTTP请求测试 |
-| E2E Testing | Playwright | 1.40+ | 端到端测试 | 跨浏览器测试，支持现代Web应用，提供可靠的用户流程测试 |
-| Build Tool | Turborepo | 1.11+ | Monorepo构建工具 | 高效的并行构建，智能缓存，简化monorepo管理 |
-| Bundler | Next.js (Webpack) | 内置 | 模块打包和代码分割 | Next.js内置优化的Webpack配置，支持代码分割和Tree Shaking |
-| IaC Tool | Terraform | 1.6+ | 基础设施即代码 | 管理云资源，版本控制基础设施，支持多云部署 |
-| CI/CD | GitHub Actions | - | 持续集成和部署 | 与GitHub深度集成，支持自动化测试和部署，免费额度充足 |
-| Monitoring | Vercel Analytics + Sentry | - | 应用性能监控和错误跟踪 | Vercel提供内置分析，Sentry提供详细的错误报告和性能监控 |
-| Logging | Winston + Supabase Logs | 3.11+ | 应用日志管理 | Winston提供结构化日志，Supabase提供集中式日志存储和查询 |
-| CSS Framework | Tailwind CSS | 3.4+ | 实用优先的CSS框架 | 与Chakra UI完美集成，提供快速样式开发，统一sm尺寸规范 |
+| Category             | Technology                   | Version | Purpose                  | Rationale                                                         |
+| -------------------- | ---------------------------- | ------- | ------------------------ | ----------------------------------------------------------------- |
+| Frontend Language    | TypeScript                   | 5.0+    | 类型安全的JavaScript开发 | 提供静态类型检查，提高代码质量和开发效率，与React完美集成         |
+| Frontend Framework   | Next.js                      | 14+     | React全栈框架            | App Router提供最佳性能和SEO，支持SSR/SSG，与Vercel部署无缝集成    |
+| UI Component Library | Chakra UI                    | 2.8+    | 可访问的UI组件库         | 提供开箱即用的可访问组件，支持主题定制，与Tailwind CSS兼容        |
+| State Management     | React Query (TanStack Query) | 5.0+    | 服务器状态管理           | 优化数据获取、缓存和同步，简化API调用逻辑，提供自动重试和缓存策略 |
+| Backend Language     | TypeScript                   | 5.0+    | 类型安全的后端开发       | 与前端共享类型定义，确保API接口类型安全                           |
+| Backend Framework    | Next.js API Routes           | 14+     | 无服务器API服务          | 与前端共享代码库，简化部署，自动扩展，支持边缘函数                |
+| API Style            | RESTful API                  | -       | 标准化API接口            | 简单直观，广泛支持，易于理解和实现，适合CRUD操作                  |
+| Database             | Supabase (PostgreSQL)        | 15+     | 关系型数据库服务         | 提供完整的PostgreSQL功能，实时功能，自动扩展，内置认证和存储      |
+| Cache                | Redis (via Supabase)         | 7+      | 内存数据缓存             | 提高性能，减少数据库负载，支持会话存储和实时数据                  |
+| File Storage         | Supabase Storage             | -       | 文件存储服务             | 与数据库集成，提供安全的文件上传、下载和CDN加速                   |
+| Authentication       | Supabase Auth                | -       | 用户认证和授权           | 开箱即用的认证功能，支持多种提供商，JWT令牌管理                   |
+| Frontend Testing     | Jest + React Testing Library | 29+     | 前端单元和集成测试       | Jest提供测试框架，RTL提供React组件测试，确保UI组件质量            |
+| Backend Testing      | Jest + Supertest             | 29+     | 后端API测试              | Jest提供测试框架，Supertest简化HTTP请求测试                       |
+| E2E Testing          | Playwright                   | 1.40+   | 端到端测试               | 跨浏览器测试，支持现代Web应用，提供可靠的用户流程测试             |
+| Build Tool           | Turborepo                    | 1.11+   | Monorepo构建工具         | 高效的并行构建，智能缓存，简化monorepo管理                        |
+| Bundler              | Next.js (Webpack)            | 内置    | 模块打包和代码分割       | Next.js内置优化的Webpack配置，支持代码分割和Tree Shaking          |
+| IaC Tool             | Terraform                    | 1.6+    | 基础设施即代码           | 管理云资源，版本控制基础设施，支持多云部署                        |
+| CI/CD                | GitHub Actions               | -       | 持续集成和部署           | 与GitHub深度集成，支持自动化测试和部署，免费额度充足              |
+| Monitoring           | Vercel Analytics + Sentry    | -       | 应用性能监控和错误跟踪   | Vercel提供内置分析，Sentry提供详细的错误报告和性能监控            |
+| Logging              | Winston + Supabase Logs      | 3.11+   | 应用日志管理             | Winston提供结构化日志，Supabase提供集中式日志存储和查询           |
+| CSS Framework        | Tailwind CSS                 | 3.4+    | 实用优先的CSS框架        | 与Chakra UI完美集成，提供快速样式开发，统一sm尺寸规范             |
 
 ## 4. Data Models
 
 ### User
+
 **Purpose:** 存储用户账户信息、认证数据和用户偏好设置
 
 **Key Attributes:**
+
 - id: UUID - 用户唯一标识符
 - email: string - 用户邮箱地址
 - name: string - 用户显示名称
@@ -129,39 +140,43 @@ graph TD
 - preferences: jsonb - 用户偏好设置（主题、语言、通知等）
 
 #### TypeScript Interface
+
 ```typescript
 interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url?: string;
-  created_at: string;
-  updated_at: string;
+  id: string
+  email: string
+  name: string
+  avatar_url?: string
+  created_at: string
+  updated_at: string
   preferences: {
-    theme: 'light' | 'dark' | 'system';
-    language: string;
+    theme: 'light' | 'dark' | 'system'
+    language: string
     notifications: {
-      email: boolean;
-      push: boolean;
-    };
+      email: boolean
+      push: boolean
+    }
     ai_settings: {
-      default_provider: string;
-      summary_length: 'short' | 'medium' | 'long';
-    };
-  };
+      default_provider: string
+      summary_length: 'short' | 'medium' | 'long'
+    }
+  }
 }
 ```
 
 #### Relationships
+
 - 一个用户可以有多个工作记录（一对多）
 - 一个用户可以有多个总结（一对多）
 - 一个用户可以配置多个AI服务（一对多）
 - 一个用户可以创建多个提示模板（一对多）
 
 ### WorkRecord
+
 **Purpose:** 存储用户的工作记录内容，包括标题、正文、标签和时间信息
 
 **Key Attributes:**
+
 - id: UUID - 工作记录唯一标识符
 - user_id: UUID - 关联用户ID
 - title: string - 工作记录标题
@@ -173,33 +188,37 @@ interface User {
 - metadata: jsonb - 元数据（字数、阅读时间等）
 
 #### TypeScript Interface
+
 ```typescript
 interface WorkRecord {
-  id: string;
-  user_id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  created_at: string;
-  updated_at: string;
-  is_pinned: boolean;
+  id: string
+  user_id: string
+  title: string
+  content: string
+  tags: string[]
+  created_at: string
+  updated_at: string
+  is_pinned: boolean
   metadata: {
-    word_count: number;
-    reading_time: number;
-    source: 'manual' | 'import' | 'quick';
-  };
+    word_count: number
+    reading_time: number
+    source: 'manual' | 'import' | 'quick'
+  }
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 - 一个工作记录可以有多个总结（一对多）
 - 关联多个标签（多对多，通过标签关联表）
 
 ### Tag
+
 **Purpose:** 存储标签信息，用于分类和组织工作记录
 
 **Key Attributes:**
+
 - id: UUID - 标签唯一标识符
 - user_id: UUID - 创建用户ID
 - name: string - 标签名称
@@ -208,25 +227,29 @@ interface WorkRecord {
 - usage_count: integer - 使用次数
 
 #### TypeScript Interface
+
 ```typescript
 interface Tag {
-  id: string;
-  user_id: string;
-  name: string;
-  color: string;
-  created_at: string;
-  usage_count: number;
+  id: string
+  user_id: string
+  name: string
+  color: string
+  created_at: string
+  usage_count: number
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 - 可以关联多个工作记录（多对多）
 
 ### Summary
+
 **Purpose:** 存储AI生成的工作总结，包括原始内容、总结结果和质量评估
 
 **Key Attributes:**
+
 - id: UUID - 总结唯一标识符
 - user_id: UUID - 用户ID
 - work_record_ids: UUID[] - 关联的工作记录ID数组
@@ -239,34 +262,38 @@ interface Tag {
 - metadata: jsonb - 元数据（token使用、生成时间等）
 
 #### TypeScript Interface
+
 ```typescript
 interface Summary {
-  id: string;
-  user_id: string;
-  work_record_ids: string[];
-  content: string;
-  ai_provider: 'openai' | 'gemini' | 'deepseek' | 'custom';
-  model: string;
-  prompt_template_id?: string;
-  quality_score: number;
-  created_at: string;
+  id: string
+  user_id: string
+  work_record_ids: string[]
+  content: string
+  ai_provider: 'openai' | 'gemini' | 'deepseek' | 'custom'
+  model: string
+  prompt_template_id?: string
+  quality_score: number
+  created_at: string
   metadata: {
-    tokens_used: number;
-    generation_time: number;
-    cost: number;
-  };
+    tokens_used: number
+    generation_time: number
+    cost: number
+  }
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 - 关联多个工作记录（多对多）
 - 可能使用一个提示模板（多对一）
 
 ### AIService
+
 **Purpose:** 存储用户配置的AI服务提供商信息
 
 **Key Attributes:**
+
 - id: UUID - 服务配置唯一标识符
 - user_id: UUID - 用户ID
 - provider: string - 服务提供商名称
@@ -278,27 +305,31 @@ interface Summary {
 - updated_at: timestamp - 最后更新时间
 
 #### TypeScript Interface
+
 ```typescript
 interface AIService {
-  id: string;
-  user_id: string;
-  provider: 'openai' | 'gemini' | 'deepseek' | 'custom';
-  api_key: string; // 加密存储
-  base_url?: string;
-  model: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  id: string
+  user_id: string
+  provider: 'openai' | 'gemini' | 'deepseek' | 'custom'
+  api_key: string // 加密存储
+  base_url?: string
+  model: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 
 ### PromptTemplate
+
 **Purpose:** 存储用户创建的AI提示模板
 
 **Key Attributes:**
+
 - id: UUID - 模板唯一标识符
 - user_id: UUID - 创建用户ID
 - name: string - 模板名称
@@ -310,33 +341,37 @@ interface AIService {
 - updated_at: timestamp - 最后更新时间
 
 #### TypeScript Interface
+
 ```typescript
 interface PromptTemplate {
-  id: string;
-  user_id: string;
-  name: string;
-  description: string;
-  template: string;
+  id: string
+  user_id: string
+  name: string
+  description: string
+  template: string
   variables: {
-    name: string;
-    type: string;
-    required: boolean;
-    default?: string;
-  }[];
-  is_public: boolean;
-  created_at: string;
-  updated_at: string;
+    name: string
+    type: string
+    required: boolean
+    default?: string
+  }[]
+  is_public: boolean
+  created_at: string
+  updated_at: string
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 - 被多个总结使用（一对多）
 
 ### Export
+
 **Purpose:** 存储导出历史记录
 
 **Key Attributes:**
+
 - id: UUID - 导出记录唯一标识符
 - user_id: UUID - 用户ID
 - type: string - 导出类型（PDF、CSV、JSON等）
@@ -348,28 +383,30 @@ interface PromptTemplate {
 - completed_at: timestamp - 完成时间
 
 #### TypeScript Interface
+
 ```typescript
 interface Export {
-  id: string;
-  user_id: string;
-  type: 'pdf' | 'csv' | 'json' | 'markdown';
+  id: string
+  user_id: string
+  type: 'pdf' | 'csv' | 'json' | 'markdown'
   filter: {
     date_range: {
-      start: string;
-      end: string;
-    };
-    tags?: string[];
-    include_summaries: boolean;
-  };
-  file_url?: string;
-  file_size?: number;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  created_at: string;
-  completed_at?: string;
+      start: string
+      end: string
+    }
+    tags?: string[]
+    include_summaries: boolean
+  }
+  file_url?: string
+  file_size?: number
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  created_at: string
+  completed_at?: string
 }
 ```
 
 #### Relationships
+
 - 属于一个用户（多对一）
 
 ## 5. API Specification
@@ -1345,9 +1382,11 @@ components:
 ## 6. Components
 
 ### Frontend Application
+
 **Responsibility:** 提供用户界面，处理用户交互，管理前端状态，与后端API通信
 
 **Key Interfaces:**
+
 - REST API客户端接口
 - React组件接口
 - 状态管理接口
@@ -1358,9 +1397,11 @@ components:
 **Technology Stack:** TypeScript, Next.js 14+, React 18+, Chakra UI 2.8+, React Query 5.0+, Tailwind CSS 3.4+
 
 ### Backend API Service
+
 **Responsibility:** 处理HTTP请求，实现业务逻辑，管理数据访问，提供RESTful API
 
 **Key Interfaces:**
+
 - REST API端点
 - 数据库访问接口
 - 认证中间件
@@ -1371,9 +1412,11 @@ components:
 **Technology Stack:** TypeScript, Next.js 14+, Supabase (PostgreSQL), Drizzle ORM, jsonwebtoken
 
 ### AI Service Integration
+
 **Responsibility:** 管理与多个AI服务提供商的集成，处理AI请求和响应，提供统一的AI服务接口
 
 **Key Interfaces:**
+
 - AI服务提供商接口
 - 提示模板接口
 - 总结生成接口
@@ -1384,9 +1427,11 @@ components:
 **Technology Stack:** TypeScript, Vercel AI SDK, OpenAI, Google AI, DeepSeek SDK
 
 ### Data Management Service
+
 **Responsibility:** 管理数据模型，处理数据验证，实现数据访问层，提供数据同步功能
 
 **Key Interfaces:**
+
 - 数据模型接口
 - 数据验证接口
 - 数据同步接口
@@ -1397,9 +1442,11 @@ components:
 **Technology Stack:** TypeScript, Drizzle ORM, Supabase, Zod (数据验证)
 
 ### Authentication Service
+
 **Responsibility:** 处理用户认证和授权，管理JWT令牌，实现权限控制
 
 **Key Interfaces:**
+
 - 用户认证接口
 - 令牌管理接口
 - 权限验证接口
@@ -1410,9 +1457,11 @@ components:
 **Technology Stack:** TypeScript, Supabase Auth, jsonwebtoken, Next.js Middleware
 
 ### Real-time Sync Service
+
 **Responsibility:** 实现实时数据同步，管理WebSocket连接，处理实时事件
 
 **Key Interfaces:**
+
 - 实时事件接口
 - WebSocket连接接口
 - 数据同步接口
@@ -1423,9 +1472,11 @@ components:
 **Technology Stack:** TypeScript, Supabase Realtime, WebSocket API
 
 ### File Storage Service
+
 **Responsibility:** 管理文件上传、下载和存储，处理文件格式转换，提供CDN加速
 
 **Key Interfaces:**
+
 - 文件上传接口
 - 文件下载接口
 - 文件管理接口
@@ -1436,9 +1487,11 @@ components:
 **Technology Stack:** TypeScript, Supabase Storage, Multer (文件处理)
 
 ### Analytics Service
+
 **Responsibility:** 收集和分析用户数据，生成统计报告，提供数据可视化支持
 
 **Key Interfaces:**
+
 - 数据收集接口
 - 分析计算接口
 - 报告生成接口
@@ -1449,9 +1502,11 @@ components:
 **Technology Stack:** TypeScript, Recharts 2.8+, Drizzle ORM, Supabase
 
 ### Export Service
+
 **Responsibility:** 处理数据导出请求，生成各种格式的导出文件，管理导出任务队列
 
 **Key Interfaces:**
+
 - 导出任务接口
 - 文件生成接口
 - 格式转换接口
@@ -1462,9 +1517,11 @@ components:
 **Technology Stack:** TypeScript, PDFKit, csv-stringify, js-yaml, Bull (队列)
 
 ### Notification Service
+
 **Responsibility:** 管理用户通知，处理邮件和推送通知，提供通知模板
 
 **Key Interfaces:**
+
 - 通知发送接口
 - 通知模板接口
 - 用户偏好接口
@@ -1488,7 +1545,7 @@ graph TD
     C --> I[Analytics Service]
     C --> J[Export Service]
     C --> K[Notification Service]
-    
+
     E --> L[Supabase PostgreSQL]
     D --> L
     F --> M[OpenAI API]
@@ -1498,11 +1555,11 @@ graph TD
     H --> Q[Supabase Storage]
     J --> R[文件存储系统]
     K --> S[邮件服务/推送服务]
-    
+
     B --> T[React Query缓存]
     B --> U[Chakra UI组件]
     B --> V[状态管理]
-    
+
     C --> W[错误处理中间件]
     C --> X[速率限制中间件]
     C --> Y[CORS中间件]
@@ -1511,15 +1568,17 @@ graph TD
 ## 7. External APIs
 
 ### OpenAI API
+
 - **Purpose:** 提供GPT模型进行工作记录的智能总结和内容分析
 - **Documentation:** https://platform.openai.com/docs/api-reference
 - **Base URL(s):** https://api.openai.com/v1
 - **Authentication:** Bearer Token (API Key)
-- **Rate Limits:** 
+- **Rate Limits:**
   - Free tier: 20 requests per minute, 200,000 tokens per minute
   - Paid tier: 3,500 requests per minute, 350,000 tokens per minute
 
 **Key Endpoints Used:**
+
 - `POST /chat/completions` - 生成对话完成（用于工作总结）
 - `POST /embeddings` - 生成文本嵌入（用于语义搜索）
 - `GET /models` - 获取可用模型列表
@@ -1527,6 +1586,7 @@ graph TD
 **Integration Notes:** 使用Vercel AI SDK进行集成，支持流式响应和错误重试。需要处理API密钥的安全存储和轮换。
 
 ### Gemini API
+
 - **Purpose:** 提供Google的Gemini模型进行多模态内容理解和总结
 - **Documentation:** https://ai.google.dev/docs
 - **Base URL(s):** https://generativelanguage.googleapis.com/v1
@@ -1534,6 +1594,7 @@ graph TD
 - **Rate Limits:** 60 requests per minute
 
 **Key Endpoints Used:**
+
 - `POST /models/{model}:generateContent` - 生成内容（用于工作总结）
 - `POST /models/{model}:countTokens` - 计算token数量
 - `POST /models/{model}:embedContent` - 生成内容嵌入
@@ -1541,6 +1602,7 @@ graph TD
 **Integration Notes:** 需要处理多模态输入（文本、图片），支持流式响应。注意不同模型的特性和限制。
 
 ### DeepSeek API
+
 - **Purpose:** 提供DeepSeek模型进行中文内容优化和专业领域总结
 - **Documentation:** https://platform.deepseek.com/api-docs
 - **Base URL(s):** https://api.deepseek.com
@@ -1548,6 +1610,7 @@ graph TD
 - **Rate Limits:** 100 requests per minute
 
 **Key Endpoints Used:**
+
 - `POST /chat/completions` - 生成对话完成
 - `POST /embeddings` - 生成文本嵌入
 - `GET /models` - 获取模型列表
@@ -1555,6 +1618,7 @@ graph TD
 **Integration Notes:** 专门优化中文内容处理，支持长文本处理。需要注意API兼容性和错误处理。
 
 ### Supabase Auth API
+
 - **Purpose:** 提供用户认证、会话管理和权限控制
 - **Documentation:** https://supabase.com/docs/reference/auth
 - **Base URL(s):** https://{project_ref}.supabase.co/auth/v1
@@ -1562,6 +1626,7 @@ graph TD
 - **Rate Limits:** 30 requests per second per IP
 
 **Key Endpoints Used:**
+
 - `POST /signup` - 用户注册
 - `POST /token?grant_type=password` - 用户登录
 - `POST /token?grant_type=refresh_token` - 刷新令牌
@@ -1571,6 +1636,7 @@ graph TD
 **Integration Notes:** 使用Supabase JS客户端进行集成，支持JWT令牌管理和会话持久化。
 
 ### Supabase Storage API
+
 - **Purpose:** 提供文件存储、上传和CDN加速服务
 - **Documentation:** https://supabase.com/docs/reference/storage
 - **Base URL(s):** https://{project_ref}.supabase.co/storage/v1
@@ -1578,6 +1644,7 @@ graph TD
 - **Rate Limits:** 100 requests per second per IP
 
 **Key Endpoints Used:**
+
 - `POST /object/{bucket_name}` - 上传文件
 - `GET /object/{bucket_name}/{file_path}` - 下载文件
 - `DELETE /object/{bucket_name}/{file_path}` - 删除文件
@@ -1587,6 +1654,7 @@ graph TD
 **Integration Notes:** 支持大文件分片上传，自动生成CDN URL，支持文件权限管理。
 
 ### Supabase Realtime API
+
 - **Purpose:** 提供实时数据同步和WebSocket连接
 - **Documentation:** https://supabase.com/docs/reference/realtime
 - **Base URL(s):** wss://{project_ref}.supabase.co/realtime/v1
@@ -1594,6 +1662,7 @@ graph TD
 - **Rate Limits:** 100 connections per client
 
 **Key Endpoints Used:**
+
 - `WebSocket /realtime/v1` - 建立实时连接
 - `POST /realtime/v1/subscribe` - 订阅数据变更
 - `POST /realtime/v1/unsubscribe` - 取消订阅
@@ -1603,6 +1672,7 @@ graph TD
 ## 8. Core Workflows
 
 ### Workflow 1: User Registration and Login
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -1639,6 +1709,7 @@ sequenceDiagram
 ```
 
 ### Workflow 2: Creating a Work Record
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -1678,6 +1749,7 @@ sequenceDiagram
 ```
 
 ### Workflow 3: Generating AI Summary
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -1722,6 +1794,7 @@ sequenceDiagram
 ```
 
 ### Workflow 4: Real-time Data Synchronization
+
 ```mermaid
 sequenceDiagram
     participant F1 as Frontend Device 1
@@ -1754,6 +1827,7 @@ sequenceDiagram
 ```
 
 ### Workflow 5: Data Export
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -2005,7 +2079,7 @@ CREATE POLICY "Users can delete own sessions" ON user_sessions FOR DELETE USING 
 
 -- 创建视图以简化查询
 CREATE VIEW work_record_details AS
-SELECT 
+SELECT
     wr.id,
     wr.user_id,
     wr.title,
@@ -2021,7 +2095,7 @@ FROM work_records wr
 JOIN users u ON wr.user_id = u.id;
 
 CREATE VIEW summary_details AS
-SELECT 
+SELECT
     s.id,
     s.user_id,
     s.work_record_ids,
@@ -2050,16 +2124,16 @@ RETURNS TABLE(
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         COUNT(*)::BIGINT,
         SUM(LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1)::BIGINT,
         AVG(LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1)::DECIMAL,
         ARRAY(
-            SELECT tag 
+            SELECT tag
             FROM (
-                SELECT UNNEST(tags) as tag, COUNT(*) 
-                FROM work_records 
-                WHERE user_id = p_user_id 
+                SELECT UNNEST(tags) as tag, COUNT(*)
+                FROM work_records
+                WHERE user_id = p_user_id
                 AND created_at >= NOW() - p_period
                 GROUP BY tag
                 ORDER BY COUNT(*) DESC
@@ -2067,8 +2141,8 @@ BEGIN
             ) t
         ),
         COUNT(*)::DECIMAL / EXTRACT(DAY FROM p_period)
-    FROM work_records 
-    WHERE user_id = p_user_id 
+    FROM work_records
+    WHERE user_id = p_user_id
     AND created_at >= NOW() - p_period;
 END;
 $$ LANGUAGE plpgsql;
@@ -2079,7 +2153,7 @@ RETURNS VOID AS $$
 BEGIN
     -- 重置所有标签的计数
     UPDATE tags SET usage_count = 0;
-    
+
     -- 重新计算每个标签的使用次数
     UPDATE tags t
     SET usage_count = COALESCE(tag_counts.count, 0)
@@ -2098,6 +2172,7 @@ $$ LANGUAGE plpgsql;
 ### Component Architecture
 
 #### Component Organization
+
 ```
 src/
 ├── app/                    # Next.js App Router目录
@@ -2238,6 +2313,7 @@ src/
 ```
 
 #### Component Template
+
 ```typescript
 // src/components/features/work-record/work-record-item.tsx
 'use client';
@@ -2284,11 +2360,11 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
               {formatDistanceToNow(new Date(workRecord.created_at))}
             </Text>
           </HStack>
-          
+
           <Text fontSize="sm" color="gray.600" noOfLines={2}>
             {workRecord.content}
           </Text>
-          
+
           {workRecord.tags.length > 0 && (
             <HStack spacing={1} flexWrap="wrap">
               {workRecord.tags.map((tag, index) => (
@@ -2305,7 +2381,7 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
               ))}
             </HStack>
           )}
-          
+
           <HStack spacing={2}>
             {onView && (
               <IconButton
@@ -2346,22 +2422,23 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
 ### State Management Architecture
 
 #### State Structure
+
 ```typescript
 // src/stores/auth.store.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User, AuthSession } from '@/types/api.types';
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { User, AuthSession } from '@/types/api.types'
 
 interface AuthState {
-  user: User | null;
-  session: AuthSession | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => Promise<void>;
-  refreshSession: () => Promise<void>;
-  updateUser: (userData: Partial<User>) => Promise<void>;
+  user: User | null
+  session: AuthSession | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, name: string) => Promise<void>
+  logout: () => Promise<void>
+  refreshSession: () => Promise<void>
+  updateUser: (userData: Partial<User>) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -2373,92 +2450,93 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
 
       login: async (email: string, password: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          const response = await authApi.login({ email, password });
+          const response = await authApi.login({ email, password })
           set({
             user: response.user,
             session: response.session,
             isAuthenticated: true,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       register: async (email: string, password: string, name: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          const response = await authApi.register({ email, password, name });
+          const response = await authApi.register({ email, password, name })
           set({
             user: response.user,
             session: response.session,
             isAuthenticated: true,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       logout: async () => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          await authApi.logout();
+          await authApi.logout()
           set({
             user: null,
             session: null,
             isAuthenticated: false,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       refreshSession: async () => {
         try {
-          const response = await authApi.refreshSession();
+          const response = await authApi.refreshSession()
           set({
             user: response.user,
             session: response.session,
-            isAuthenticated: true
-          });
+            isAuthenticated: true,
+          })
         } catch (error) {
           set({
             user: null,
             session: null,
-            isAuthenticated: false
-          });
+            isAuthenticated: false,
+          })
         }
       },
 
       updateUser: async (userData: Partial<User>) => {
         try {
-          const updatedUser = await authApi.updateUser(userData);
-          set({ user: updatedUser });
+          const updatedUser = await authApi.updateUser(userData)
+          set({ user: updatedUser })
         } catch (error) {
-          throw error;
+          throw error
         }
-      }
+      },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         user: state.user,
         session: state.session,
-        isAuthenticated: state.isAuthenticated
-      })
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
-);
+)
 ```
 
 #### State Management Patterns
+
 - **Zustand for Client State:** 轻量级状态管理，支持持久化和中间件
 - **React Query for Server State:** 处理API数据获取、缓存和同步
 - **Local State for Component State:** 使用useState和useContext管理组件内部状态
@@ -2468,6 +2546,7 @@ export const useAuthStore = create<AuthState>()(
 ### Routing Architecture (App Router)
 
 #### Route Organization
+
 ```typescript
 // src/app/layout.tsx (根布局)
 import { Inter } from 'next/font/google';
@@ -2522,7 +2601,7 @@ export default async function DashboardLayout({
 }) {
   const supabase = createServerComponentClient({ cookies });
   const { data: { session } } = await supabase.auth.getSession();
-  
+
   if (!session) {
     redirect('/auth/login');
   }
@@ -2547,6 +2626,7 @@ export default function SettingsLayout({
 ```
 
 #### Protected Route Pattern (App Router)
+
 ```typescript
 // src/components/auth/protected-route.tsx
 'use client';
@@ -2581,7 +2661,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         await refreshSession();
       }
     };
-    
+
     checkAuth();
   }, [isAuthenticated, isLoading, refreshSession]);
 
@@ -2617,13 +2697,14 @@ export default function DashboardPage() {
 ### Frontend Services Layer
 
 #### API Client Setup
+
 ```typescript
 // src/services/api-client.ts
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useAuthStore } from '@/stores/auth.store';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { useAuthStore } from '@/stores/auth.store'
 
 class ApiClient {
-  private instance: AxiosInstance;
+  private instance: AxiosInstance
 
   constructor() {
     this.instance = axios.create({
@@ -2632,80 +2713,93 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    })
 
-    this.setupInterceptors();
+    this.setupInterceptors()
   }
 
   private setupInterceptors() {
     // Request interceptor to add auth token
     this.instance.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const token = useAuthStore.getState().session?.access_token;
+        const token = useAuthStore.getState().session?.access_token
         if (token) {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers = config.headers || {}
+          config.headers.Authorization = `Bearer ${token}`
         }
-        return config;
+        return config
       },
-      (error) => Promise.reject(error)
-    );
+      error => Promise.reject(error)
+    )
 
     // Response interceptor to handle auth errors
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
-      async (error) => {
-        const originalRequest = error.config;
+      async error => {
+        const originalRequest = error.config
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          
+          originalRequest._retry = true
+
           try {
-            await useAuthStore.getState().refreshSession();
-            const newToken = useAuthStore.getState().session?.access_token;
-            
+            await useAuthStore.getState().refreshSession()
+            const newToken = useAuthStore.getState().session?.access_token
+
             if (newToken) {
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              return this.instance(originalRequest);
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+              return this.instance(originalRequest)
             }
           } catch (refreshError) {
-            useAuthStore.getState().logout();
-            window.location.href = '/auth/login';
-            return Promise.reject(refreshError);
+            useAuthStore.getState().logout()
+            window.location.href = '/auth/login'
+            return Promise.reject(refreshError)
           }
         }
 
-        return Promise.reject(error);
+        return Promise.reject(error)
       }
-    );
+    )
   }
 
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.get(url, config).then(response => response.data);
+    return this.instance.get(url, config).then(response => response.data)
   }
 
-  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.post(url, data, config).then(response => response.data);
+  post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.instance.post(url, data, config).then(response => response.data)
   }
 
-  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.put(url, data, config).then(response => response.data);
+  put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.instance.put(url, data, config).then(response => response.data)
   }
 
   delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.delete(url, config).then(response => response.data);
+    return this.instance.delete(url, config).then(response => response.data)
   }
 }
 
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient()
 ```
 
 #### Service Example
+
 ```typescript
 // src/services/work-record.service.ts
-import { apiClient } from './api-client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WorkRecord, CreateWorkRecord, UpdateWorkRecord } from '@/types/api.types';
+import { apiClient } from './api-client'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  WorkRecord,
+  CreateWorkRecord,
+  UpdateWorkRecord,
+} from '@/types/api.types'
 
 export const workRecordKeys = {
   all: ['work-records'] as const,
@@ -2713,82 +2807,86 @@ export const workRecordKeys = {
   list: (filters: any) => [...workRecordKeys.lists(), { filters }] as const,
   details: () => [...workRecordKeys.all, 'detail'] as const,
   detail: (id: string) => [...workRecordKeys.details(), id] as const,
-};
+}
 
 export const workRecordApi = {
   getWorkRecords: (params?: {
-    page?: number;
-    limit?: number;
-    tags?: string;
-    date_from?: string;
-    date_to?: string;
-    search?: string;
+    page?: number
+    limit?: number
+    tags?: string
+    date_from?: string
+    date_to?: string
+    search?: string
   }) => apiClient.get<WorkRecord[]>('/work-records', { params }),
-  
-  getWorkRecord: (id: string) => apiClient.get<WorkRecord>(`/work-records/${id}`),
-  
-  createWorkRecord: (data: CreateWorkRecord) => apiClient.post<WorkRecord>('/work-records', data),
-  
-  updateWorkRecord: (id: string, data: UpdateWorkRecord) => apiClient.put<WorkRecord>(`/work-records/${id}`, data),
-  
+
+  getWorkRecord: (id: string) =>
+    apiClient.get<WorkRecord>(`/work-records/${id}`),
+
+  createWorkRecord: (data: CreateWorkRecord) =>
+    apiClient.post<WorkRecord>('/work-records', data),
+
+  updateWorkRecord: (id: string, data: UpdateWorkRecord) =>
+    apiClient.put<WorkRecord>(`/work-records/${id}`, data),
+
   deleteWorkRecord: (id: string) => apiClient.delete(`/work-records/${id}`),
-};
+}
 
 export const useWorkRecords = (params?: any) => {
   return useQuery({
     queryKey: workRecordKeys.list(params),
     queryFn: () => workRecordApi.getWorkRecords(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
+  })
+}
 
 export const useWorkRecord = (id: string) => {
   return useQuery({
     queryKey: workRecordKeys.detail(id),
     queryFn: () => workRecordApi.getWorkRecord(id),
     enabled: !!id,
-  });
-};
+  })
+}
 
 export const useCreateWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: workRecordApi.createWorkRecord,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.setQueryData(workRecordKeys.detail(data.id), data);
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.setQueryData(workRecordKeys.detail(data.id), data)
     },
-  });
-};
+  })
+}
 
 export const useUpdateWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWorkRecord }) => 
+    mutationFn: ({ id, data }: { id: string; data: UpdateWorkRecord }) =>
       workRecordApi.updateWorkRecord(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.setQueryData(workRecordKeys.detail(data.id), data);
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.setQueryData(workRecordKeys.detail(data.id), data)
     },
-  });
-};
+  })
+}
 
 export const useDeleteWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: workRecordApi.deleteWorkRecord,
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.removeQueries({ queryKey: workRecordKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.removeQueries({ queryKey: workRecordKeys.detail(id) })
     },
-  });
-};
+  })
+}
 ```
 
 ### Providers Setup (App Router)
+
 ```typescript
 // src/components/providers/index.tsx
 'use client';
@@ -2839,6 +2937,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 由于我们采用Next.js API Routes，这里使用Serverless架构：
 
 #### Function Organization
+
 ```
 src/app/api/
 ├── auth/
@@ -2874,83 +2973,98 @@ src/app/api/
 ```
 
 #### Function Template
+
 ```typescript
 // src/app/api/work-records/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { workRecordService } from '@/services/work-record.service';
-import { createWorkRecordSchema, updateWorkRecordSchema } from '@/lib/validations';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { workRecordService } from '@/services/work-record.service'
+import {
+  createWorkRecordSchema,
+  updateWorkRecordSchema,
+} from '@/lib/validations'
+import { z } from 'zod'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerComponentClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const supabase = createServerComponentClient({ cookies })
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(request.url)
     const params = {
-      page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
-      limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
+      page: searchParams.get('page')
+        ? parseInt(searchParams.get('page')!)
+        : undefined,
+      limit: searchParams.get('limit')
+        ? parseInt(searchParams.get('limit')!)
+        : undefined,
       tags: searchParams.get('tags')?.split(','),
       date_from: searchParams.get('date_from') || undefined,
       date_to: searchParams.get('date_to') || undefined,
       search: searchParams.get('search') || undefined,
-    };
+    }
 
-    const workRecords = await workRecordService.getWorkRecords(session.user.id, params);
-    
-    return NextResponse.json(workRecords);
+    const workRecords = await workRecordService.getWorkRecords(
+      session.user.id,
+      params
+    )
+
+    return NextResponse.json(workRecords)
   } catch (error) {
-    console.error('Error fetching work records:', error);
+    console.error('Error fetching work records:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    );
+    )
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerComponentClient({ cookies });
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const supabase = createServerComponentClient({ cookies })
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
-    
+    const body = await request.json()
+
     try {
-      const validatedData = createWorkRecordSchema.parse(body);
+      const validatedData = createWorkRecordSchema.parse(body)
       const workRecord = await workRecordService.createWorkRecord(
-        session.user.id, 
+        session.user.id,
         validatedData
-      );
-      
-      return NextResponse.json(workRecord, { status: 201 });
+      )
+
+      return NextResponse.json(workRecord, { status: 201 })
     } catch (validationError) {
       if (validationError instanceof z.ZodError) {
         return NextResponse.json(
-          { 
+          {
             error: 'Validation error',
-            details: validationError.errors 
+            details: validationError.errors,
           },
           { status: 400 }
-        );
+        )
       }
-      throw validationError;
+      throw validationError
     }
   } catch (error) {
-    console.error('Error creating work record:', error);
+    console.error('Error creating work record:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
-    );
+    )
   }
 }
 ```
@@ -2958,11 +3072,21 @@ export async function POST(request: NextRequest) {
 ### Database Architecture
 
 #### Schema Design
+
 ```typescript
 // src/lib/db/schema.ts
-import { pgTable, text, uuid, timestamp, boolean, jsonb, integer, pgTableCreator } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  uuid,
+  timestamp,
+  boolean,
+  jsonb,
+  integer,
+  pgTableCreator,
+} from 'drizzle-orm/pg-core'
 
-const pgTable = pgTableCreator((name) => `work_logger_${name}`);
+const pgTable = pgTableCreator(name => `work_logger_${name}`)
 
 // 用户表
 export const users = pgTable('users', {
@@ -2973,12 +3097,14 @@ export const users = pgTable('users', {
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),
   preferences: jsonb('preferences').default('{}').notNull(),
-});
+})
 
 // 工作记录表
 export const workRecords = pgTable('work_records', {
   id: uuid('id').primaryKey().defaultRandom(),
-  user_id: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   content: text('content').notNull(),
   tags: text('tags').array().notNull().default('{}'),
@@ -2986,83 +3112,102 @@ export const workRecords = pgTable('work_records', {
   updated_at: timestamp('updated_at').notNull().defaultNow(),
   is_pinned: boolean('is_pinned').default(false).notNull(),
   metadata: jsonb('metadata').default('{}').notNull(),
-});
+})
 
 // 标签表
 export const tags = pgTable('tags', {
   id: uuid('id').primaryKey().defaultRandom(),
-  user_id: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   color: text('color').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow(),
   usage_count: integer('usage_count').default(0).notNull(),
-});
+})
 
 // 工作记录-标签关联表
-export const workRecordTags = pgTable('work_record_tags', {
-  work_record_id: uuid('work_record_id').notNull().references(() => workRecords.id, { onDelete: 'cascade' }),
-  tag_id: uuid('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
-}, (table) => ({
-  pk: primaryKey({ columns: [table.work_record_id, table.tag_id] }),
-}));
+export const workRecordTags = pgTable(
+  'work_record_tags',
+  {
+    work_record_id: uuid('work_record_id')
+      .notNull()
+      .references(() => workRecords.id, { onDelete: 'cascade' }),
+    tag_id: uuid('tag_id')
+      .notNull()
+      .references(() => tags.id, { onDelete: 'cascade' }),
+  },
+  table => ({
+    pk: primaryKey({ columns: [table.work_record_id, table.tag_id] }),
+  })
+)
 
 // 总结表
 export const summaries = pgTable('summaries', {
   id: uuid('id').primaryKey().defaultRandom(),
-  user_id: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  user_id: uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   work_record_ids: uuid('work_record_ids').array().notNull(),
   content: text('content').notNull(),
   ai_provider: text('ai_provider').notNull(),
   model: text('model').notNull(),
-  prompt_template_id: uuid('prompt_template_id').references(() => promptTemplates.id, { onDelete: 'set null' }),
+  prompt_template_id: uuid('prompt_template_id').references(
+    () => promptTemplates.id,
+    { onDelete: 'set null' }
+  ),
   quality_score: integer('quality_score').notNull(),
   created_at: timestamp('created_at').notNull().defaultNow(),
   metadata: jsonb('metadata').default('{}').notNull(),
-});
+})
 
 // 其他表定义...
 ```
 
 #### Data Access Layer
+
 ```typescript
 // src/lib/db/index.ts
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
+import * as schema from './schema'
 
-const connectionString = process.env.DATABASE_URL!;
-const client = postgres(connectionString, { prepare: false });
+const connectionString = process.env.DATABASE_URL!
+const client = postgres(connectionString, { prepare: false })
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(client, { schema })
 
 // 数据库连接和查询工具
 export class DatabaseService {
-  static async transaction<T>(callback: (tx: typeof db) => Promise<T>): Promise<T> {
-    return await client.begin(async (tx) => {
-      const dbTx = drizzle(tx, { schema });
-      return await callback(dbTx as any);
-    });
+  static async transaction<T>(
+    callback: (tx: typeof db) => Promise<T>
+  ): Promise<T> {
+    return await client.begin(async tx => {
+      const dbTx = drizzle(tx, { schema })
+      return await callback(dbTx as any)
+    })
   }
 
   static async healthCheck(): Promise<boolean> {
     try {
-      await client`SELECT 1`;
-      return true;
+      await client`SELECT 1`
+      return true
     } catch (error) {
-      console.error('Database health check failed:', error);
-      return false;
+      console.error('Database health check failed:', error)
+      return false
     }
   }
 }
 ```
 
 #### Repository Pattern
+
 ```typescript
 // src/repositories/work-record.repository.ts
-import { eq, and, desc, or, ilike } from 'drizzle-orm';
-import { db } from '@/lib/db';
-import { workRecords, workRecordTags, tags } from '@/lib/db/schema';
-import { CreateWorkRecord, UpdateWorkRecord } from '@/types/api.types';
+import { eq, and, desc, or, ilike } from 'drizzle-orm'
+import { db } from '@/lib/db'
+import { workRecords, workRecordTags, tags } from '@/lib/db/schema'
+import { CreateWorkRecord, UpdateWorkRecord } from '@/types/api.types'
 
 export class WorkRecordRepository {
   static async findById(id: string, userId: string) {
@@ -3070,48 +3215,50 @@ export class WorkRecordRepository {
       .select()
       .from(workRecords)
       .where(and(eq(workRecords.id, id), eq(workRecords.user_id, userId)))
-      .limit(1);
-    
-    return result[0] || null;
+      .limit(1)
+
+    return result[0] || null
   }
 
   static async findAll(
     userId: string,
     params: {
-      page?: number;
-      limit?: number;
-      tags?: string[];
-      date_from?: string;
-      date_to?: string;
-      search?: string;
+      page?: number
+      limit?: number
+      tags?: string[]
+      date_from?: string
+      date_to?: string
+      search?: string
     } = {}
   ) {
-    const { page = 1, limit = 20, tags, date_from, date_to, search } = params;
-    const offset = (page - 1) * limit;
+    const { page = 1, limit = 20, tags, date_from, date_to, search } = params
+    const offset = (page - 1) * limit
 
-    let whereCondition = eq(workRecords.user_id, userId);
-    
+    let whereCondition = eq(workRecords.user_id, userId)
+
     if (tags && tags.length > 0) {
       whereCondition = and(
         whereCondition,
-        or(...tags.map(tag => sql`${workRecords.tags}::text[] @> ARRAY[${tag}]`))
-      );
+        or(
+          ...tags.map(tag => sql`${workRecords.tags}::text[] @> ARRAY[${tag}]`)
+        )
+      )
     }
-    
+
     if (date_from) {
       whereCondition = and(
         whereCondition,
         gte(workRecords.created_at, new Date(date_from))
-      );
+      )
     }
-    
+
     if (date_to) {
       whereCondition = and(
         whereCondition,
         lte(workRecords.created_at, new Date(date_to))
-      );
+      )
     }
-    
+
     if (search) {
       whereCondition = and(
         whereCondition,
@@ -3119,7 +3266,7 @@ export class WorkRecordRepository {
           ilike(workRecords.title, `%${search}%`),
           ilike(workRecords.content, `%${search}%`)
         )
-      );
+      )
     }
 
     const [data, totalCount] = await Promise.all([
@@ -3130,12 +3277,12 @@ export class WorkRecordRepository {
         .orderBy(desc(workRecords.created_at))
         .limit(limit)
         .offset(offset),
-      
+
       db
         .select({ count: sql<number>`count(*)` })
         .from(workRecords)
-        .where(whereCondition)
-    ]);
+        .where(whereCondition),
+    ])
 
     return {
       data,
@@ -3145,7 +3292,7 @@ export class WorkRecordRepository {
         total: totalCount[0].count,
         pages: Math.ceil(totalCount[0].count / limit),
       },
-    };
+    }
   }
 
   static async create(userId: string, data: CreateWorkRecord) {
@@ -3160,9 +3307,9 @@ export class WorkRecordRepository {
           reading_time: Math.ceil(data.content.split(' ').length / 200),
         },
       })
-      .returning();
+      .returning()
 
-    return workRecord;
+    return workRecord
   }
 
   static async update(id: string, userId: string, data: UpdateWorkRecord) {
@@ -3171,24 +3318,26 @@ export class WorkRecordRepository {
       .set({
         ...data,
         updated_at: new Date(),
-        metadata: data.content ? {
-          word_count: data.content.split(' ').length,
-          reading_time: Math.ceil(data.content.split(' ').length / 200),
-        } : undefined,
+        metadata: data.content
+          ? {
+              word_count: data.content.split(' ').length,
+              reading_time: Math.ceil(data.content.split(' ').length / 200),
+            }
+          : undefined,
       })
       .where(and(eq(workRecords.id, id), eq(workRecords.user_id, userId)))
-      .returning();
+      .returning()
 
-    return workRecord;
+    return workRecord
   }
 
   static async delete(id: string, userId: string) {
     const [deleted] = await db
       .delete(workRecords)
       .where(and(eq(workRecords.id, id), eq(workRecords.user_id, userId)))
-      .returning();
+      .returning()
 
-    return deleted;
+    return deleted
   }
 }
 ```
@@ -3196,6 +3345,7 @@ export class WorkRecordRepository {
 ### Auth Architecture
 
 #### Auth Flow
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -3225,58 +3375,59 @@ sequenceDiagram
 ```
 
 #### Middleware/Guards
+
 ```typescript
 // src/lib/middleware/auth.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server'
+import { createServerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
 export async function middleware(request: NextRequest) {
-  const res = NextResponse.next();
+  const res = NextResponse.next()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll();
+          return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
-            res.cookies.set(name, value, options);
-          });
+            request.cookies.set(name, value)
+            res.cookies.set(name, value, options)
+          })
         },
       },
     }
-  );
+  )
 
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getSession()
 
   // 保护仪表板路由
   if (request.nextUrl.pathname.startsWith('/(dashboard)')) {
     if (!session) {
-      const redirectUrl = new URL('/auth/login', request.url);
-      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-      return NextResponse.redirect(redirectUrl);
+      const redirectUrl = new URL('/auth/login', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
   // 重定向已认证用户离开认证页面
   if (request.nextUrl.pathname.startsWith('/(auth)') && session) {
-    return NextResponse.redirect(new URL('/(dashboard)', request.url));
+    return NextResponse.redirect(new URL('/(dashboard)', request.url))
   }
 
-  return res;
+  return res
 }
 
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
-};
+}
 ```
 
 ## 12. Unified Project Structure
@@ -3378,6 +3529,7 @@ work-logger/
 ### Local Development Setup
 
 #### Prerequisites
+
 ```bash
 # 检查Node.js版本 (需要18+)
 node --version
@@ -3393,6 +3545,7 @@ docker --version
 ```
 
 #### Initial Setup
+
 ```bash
 # 克隆项目
 git clone https://github.com/your-org/work-logger.git
@@ -3415,6 +3568,7 @@ npm run dev
 ```
 
 #### Development Commands
+
 ```bash
 # 启动所有服务 (前端 + 后端)
 npm run dev
@@ -3450,6 +3604,7 @@ npm run type-check
 ### Environment Configuration
 
 #### Required Environment Variables
+
 ```bash
 # Frontend (.env.local)
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -3474,107 +3629,113 @@ ENCRYPTION_KEY=your-encryption-key
 ### Deployment Strategy
 
 **Frontend Deployment:**
+
 - **Platform:** Vercel
 - **Build Command:** `npm run build`
 - **Output Directory:** `.next`
 - **CDN/Edge:** Vercel Edge Network
 
 **Backend Deployment:**
+
 - **Platform:** Vercel Serverless Functions
 - **Build Command:** `npm run build`
 - **Deployment Method:** Automatic deployment on git push
 
 ### CI/CD Pipeline
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run linting
-      run: npm run lint
-      
-    - name: Run type checking
-      run: npm run type-check
-      
-    - name: Run unit tests
-      run: npm test
-      
-    - name: Run integration tests
-      run: npm run test:integration
-      
-    - name: Build application
-      run: npm run build
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run type-check
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Build application
+        run: npm run build
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build application
-      run: npm run build
-      
-    - name: Deploy to Vercel
-      uses: vercel/action@v1
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to Vercel
+        uses: vercel/action@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
 ```
 
 ### Environments
 
-| Environment | Frontend URL | Backend URL | Purpose |
-|-------------|--------------|-------------|---------|
-| Development | http://localhost:3000 | http://localhost:3000/api | Local development |
-| Staging | https://staging.work-logger.vercel.app | https://staging.work-logger.vercel.app/api | Pre-production testing |
-| Production | https://work-logger.vercel.app | https://work-logger.vercel.app/api | Live environment |
+| Environment | Frontend URL                           | Backend URL                                | Purpose                |
+| ----------- | -------------------------------------- | ------------------------------------------ | ---------------------- |
+| Development | http://localhost:3000                  | http://localhost:3000/api                  | Local development      |
+| Staging     | https://staging.work-logger.vercel.app | https://staging.work-logger.vercel.app/api | Pre-production testing |
+| Production  | https://work-logger.vercel.app         | https://work-logger.vercel.app/api         | Live environment       |
 
 ## 15. Security and Performance
 
 ### Security Requirements
 
 **Frontend Security:**
+
 - CSP Headers: 严格的Content Security Policy，限制外部资源加载
 - XSS Prevention: 输入验证和输出编码，使用DOMPurify处理用户内容
 - Secure Storage: 敏感数据使用加密存储，避免localStorage存储敏感信息
 
 **Backend Security:**
+
 - Input Validation: 使用Zod进行严格的数据验证
 - Rate Limiting: 实现API速率限制，防止滥用
 - CORS Policy: 严格的CORS配置，只允许信任的域名
 
 **Authentication Security:**
+
 - Token Storage: HttpOnly Cookie存储JWT，防止XSS攻击
 - Session Management: 短期访问令牌 + 长期刷新令牌
 - Password Policy: 最少8位，包含大小写字母、数字和特殊字符
@@ -3582,11 +3743,13 @@ jobs:
 ### Performance Optimization
 
 **Frontend Performance:**
+
 - Bundle Size Target: 主包小于500KB，代码分割后每个包小于200KB
 - Loading Strategy: 懒加载路由和组件，预加载关键资源
 - Caching Strategy: Service Worker缓存静态资源，React Query缓存API数据
 
 **Backend Performance:**
+
 - Response Time Target: API响应时间小于200ms
 - Database Optimization: 适当的索引，查询优化，连接池
 - Caching Strategy: Redis缓存频繁查询的数据
@@ -3606,6 +3769,7 @@ Frontend Unit  Backend Unit
 ### Test Organization
 
 #### Frontend Tests
+
 ```
 tests/
 ├── unit/
@@ -3627,6 +3791,7 @@ tests/
 ```
 
 #### Backend Tests
+
 ```
 tests/
 ├── unit/
@@ -3647,6 +3812,7 @@ tests/
 ```
 
 #### E2E Tests
+
 ```
 tests/e2e/
 ├── fixtures/
@@ -3663,6 +3829,7 @@ tests/e2e/
 ### Test Examples
 
 #### Frontend Component Test
+
 ```typescript
 // tests/unit/components/work-record-item.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -3684,7 +3851,7 @@ const mockWorkRecord: WorkRecord = {
 describe('WorkRecordItem', () => {
   it('renders work record information correctly', () => {
     render(<WorkRecordItem workRecord={mockWorkRecord} />);
-    
+
     expect(screen.getByText('Test Work Record')).toBeInTheDocument();
     expect(screen.getByText('This is a test work record content')).toBeInTheDocument();
     expect(screen.getByText('work')).toBeInTheDocument();
@@ -3694,42 +3861,43 @@ describe('WorkRecordItem', () => {
   it('calls onDelete when delete button is clicked', () => {
     const mockOnDelete = jest.fn();
     render(<WorkRecordItem workRecord={mockWorkRecord} onDelete={mockOnDelete} />);
-    
+
     const deleteButton = screen.getByLabelText('Delete');
     fireEvent.click(deleteButton);
-    
+
     expect(mockOnDelete).toHaveBeenCalledWith('1');
   });
 });
 ```
 
 #### Backend API Test
+
 ```typescript
 // tests/integration/api/work-records.test.ts
-import { createServer } from 'http';
-import { api } from 'next/server';
-import { db } from '@/lib/db';
-import { workRecords } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { createServer } from 'http'
+import { api } from 'next/server'
+import { db } from '@/lib/db'
+import { workRecords } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 
 describe('Work Records API', () => {
-  let server: any;
-  let baseUrl: string;
+  let server: any
+  let baseUrl: string
 
   beforeAll(async () => {
-    server = createServer(api);
-    server.listen(0);
-    baseUrl = `http://localhost:${server.address().port}`;
-  });
+    server = createServer(api)
+    server.listen(0)
+    baseUrl = `http://localhost:${server.address().port}`
+  })
 
   afterAll(async () => {
-    server.close();
-  });
+    server.close()
+  })
 
   beforeEach(async () => {
     // 清理测试数据
-    await db.delete(workRecords);
-  });
+    await db.delete(workRecords)
+  })
 
   describe('POST /api/work-records', () => {
     it('creates a new work record', async () => {
@@ -3737,79 +3905,84 @@ describe('Work Records API', () => {
         title: 'Test Record',
         content: 'Test content',
         tags: ['test'],
-      };
+      }
 
       const response = await fetch(`${baseUrl}/api/work-records`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer test-token',
+          Authorization: 'Bearer test-token',
         },
         body: JSON.stringify(workRecordData),
-      });
+      })
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
-      expect(data.title).toBe(workRecordData.title);
-      expect(data.content).toBe(workRecordData.content);
-      expect(data.tags).toEqual(workRecordData.tags);
-    });
-  });
-});
+      expect(response.status).toBe(201)
+      const data = await response.json()
+      expect(data.title).toBe(workRecordData.title)
+      expect(data.content).toBe(workRecordData.content)
+      expect(data.tags).toEqual(workRecordData.tags)
+    })
+  })
+})
 ```
 
 #### E2E Test
+
 ```typescript
 // tests/e2e/work-record.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
 test.describe('Work Record Management', () => {
   test.beforeEach(async ({ page }) => {
     // 登录
-    await page.goto('/auth/login');
-    await page.fill('[type="email"]', 'test@example.com');
-    await page.fill('[type="password"]', 'password123');
-    await page.click('button[type="submit"]');
-    await expect(page).toHaveURL('/dashboard');
-  });
+    await page.goto('/auth/login')
+    await page.fill('[type="email"]', 'test@example.com')
+    await page.fill('[type="password"]', 'password123')
+    await page.click('button[type="submit"]')
+    await expect(page).toHaveURL('/dashboard')
+  })
 
   test('should create a new work record', async ({ page }) => {
-    await page.click('text=新建记录');
-    
-    await page.fill('[placeholder="标题"]', '测试工作记录');
-    await page.fill('[placeholder="内容"]', '这是一个测试工作记录的内容');
-    await page.fill('[placeholder="标签"]', '测试');
-    await page.press('[placeholder="标签"]', 'Enter');
-    
-    await page.click('button:has-text("保存")');
-    
-    await expect(page.locator('text=测试工作记录')).toBeVisible();
-    await expect(page.locator('text=测试工作记录的内容')).toBeVisible();
-    await expect(page.locator('text=测试')).toBeVisible();
-  });
+    await page.click('text=新建记录')
+
+    await page.fill('[placeholder="标题"]', '测试工作记录')
+    await page.fill('[placeholder="内容"]', '这是一个测试工作记录的内容')
+    await page.fill('[placeholder="标签"]', '测试')
+    await page.press('[placeholder="标签"]', 'Enter')
+
+    await page.click('button:has-text("保存")')
+
+    await expect(page.locator('text=测试工作记录')).toBeVisible()
+    await expect(page.locator('text=测试工作记录的内容')).toBeVisible()
+    await expect(page.locator('text=测试')).toBeVisible()
+  })
 
   test('should generate AI summary', async ({ page }) => {
     // 创建测试记录
-    await page.click('text=新建记录');
-    await page.fill('[placeholder="标题"]', '需要总结的工作');
-    await page.fill('[placeholder="内容"]', '这是一个需要AI总结的详细工作内容，包含了很多重要的信息和要点。');
-    await page.click('button:has-text("保存")');
-    
+    await page.click('text=新建记录')
+    await page.fill('[placeholder="标题"]', '需要总结的工作')
+    await page.fill(
+      '[placeholder="内容"]',
+      '这是一个需要AI总结的详细工作内容，包含了很多重要的信息和要点。'
+    )
+    await page.click('button:has-text("保存")')
+
     // 生成总结
-    await page.click('button:has-text("生成总结")');
-    await page.selectOption('select', 'openai');
-    await page.click('button:has-text("确认生成")');
-    
+    await page.click('button:has-text("生成总结")')
+    await page.selectOption('select', 'openai')
+    await page.click('button:has-text("确认生成")')
+
     // 等待总结生成
-    await expect(page.locator('text=总结生成成功')).toBeVisible();
-    await expect(page.locator('.summary-content')).toBeVisible();
-  });
-});
+    await expect(page.locator('text=总结生成成功')).toBeVisible()
+    await expect(page.locator('.summary-content')).toBeVisible()
+  })
+})
 ```
 
 ## 17. Coding Standards
 
 ### Critical Fullstack Rules
+
 - **Type Sharing:** 始终在 `packages/shared` 中定义类型并从那里导入
 - **API Calls:** 绝不直接进行HTTP调用 - 使用服务层
 - **Environment Variables:** 只通过配置对象访问，绝不直接使用 process.env
@@ -3822,21 +3995,22 @@ test.describe('Work Record Management', () => {
 
 ### Naming Conventions
 
-| Element | Frontend | Backend | Example |
-|----------|-----------|----------|---------|
-| Components | PascalCase | - | `UserProfile.tsx` |
-| Hooks | camelCase with 'use' | - | `useAuth.ts` |
-| API Routes | - | kebab-case | `/api/user-profile` |
-| Database Tables | - | snake_case | `user_profiles` |
-| Functions | camelCase | camelCase | `getUserProfile()` |
-| Variables | camelCase | snake_case | `userName` / `user_name` |
-| Constants | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `API_BASE_URL` |
-| Interfaces | PascalCase | PascalCase | `UserProfile` |
-| Types | PascalCase | PascalCase | `WorkRecord` |
+| Element         | Frontend             | Backend              | Example                  |
+| --------------- | -------------------- | -------------------- | ------------------------ |
+| Components      | PascalCase           | -                    | `UserProfile.tsx`        |
+| Hooks           | camelCase with 'use' | -                    | `useAuth.ts`             |
+| API Routes      | -                    | kebab-case           | `/api/user-profile`      |
+| Database Tables | -                    | snake_case           | `user_profiles`          |
+| Functions       | camelCase            | camelCase            | `getUserProfile()`       |
+| Variables       | camelCase            | snake_case           | `userName` / `user_name` |
+| Constants       | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `API_BASE_URL`           |
+| Interfaces      | PascalCase           | PascalCase           | `UserProfile`            |
+| Types           | PascalCase           | PascalCase           | `WorkRecord`             |
 
 ## 18. Error Handling Strategy
 
 ### Error Flow
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -3858,16 +4032,17 @@ sequenceDiagram
 ```
 
 ### Error Response Format
+
 ```typescript
 // src/types/error.types.ts
 interface ApiError {
   error: {
-    code: string;
-    message: string;
-    details?: Record<string, any>;
-    timestamp: string;
-    requestId: string;
-  };
+    code: string
+    message: string
+    details?: Record<string, any>
+    timestamp: string
+    requestId: string
+  }
 }
 
 // 错误代码枚举
@@ -3883,68 +4058,70 @@ export enum ErrorCode {
 ```
 
 ### Frontend Error Handler
+
 ```typescript
 // src/lib/error-handler.ts
-import { toast } from '@/components/ui/toaster';
+import { toast } from '@/components/ui/toaster'
 
 export class ErrorHandler {
   static handleApiError(error: any) {
     if (error.response?.data?.error) {
-      const apiError = error.response.data.error;
-      
+      const apiError = error.response.data.error
+
       switch (apiError.code) {
         case 'VALIDATION_ERROR':
-          toast.error('输入数据格式错误');
-          break;
+          toast.error('输入数据格式错误')
+          break
         case 'AUTHENTICATION_ERROR':
-          toast.error('请先登录');
+          toast.error('请先登录')
           // 重定向到登录页
-          window.location.href = '/auth/login';
-          break;
+          window.location.href = '/auth/login'
+          break
         case 'AUTHORIZATION_ERROR':
-          toast.error('权限不足');
-          break;
+          toast.error('权限不足')
+          break
         case 'NOT_FOUND':
-          toast.error('资源不存在');
-          break;
+          toast.error('资源不存在')
+          break
         case 'RATE_LIMIT_EXCEEDED':
-          toast.error('请求过于频繁，请稍后再试');
-          break;
+          toast.error('请求过于频繁，请稍后再试')
+          break
         case 'EXTERNAL_SERVICE_ERROR':
-          toast.error('外部服务暂时不可用');
-          break;
+          toast.error('外部服务暂时不可用')
+          break
         default:
-          toast.error('操作失败，请稍后再试');
+          toast.error('操作失败，请稍后再试')
       }
     } else {
-      toast.error('网络错误，请检查连接');
+      toast.error('网络错误，请检查连接')
     }
-    
+
     // 发送错误到监控服务
-    this.logError(error);
+    this.logError(error)
   }
 
   static handleUnexpectedError(error: any) {
-    console.error('Unexpected error:', error);
-    toast.error('发生未知错误');
-    this.logError(error);
+    console.error('Unexpected error:', error)
+    toast.error('发生未知错误')
+    this.logError(error)
   }
 
   private static logError(error: any) {
     // 发送到错误监控服务
     if (process.env.NODE_ENV === 'production') {
       // Sentry或其他错误监控服务
-      console.log('Error logged to monitoring service:', error);
+      console.log('Error logged to monitoring service:', error)
     }
   }
 }
 ```
 
 ### Backend Error Handler
+
 ```typescript
 // src/lib/error-handler.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { ErrorCode } from '@/types/error.types';
+import { NextRequest, NextResponse } from 'next/server'
+import { ErrorCode } from '@/types/error.types'
 
 export class ApiError extends Error {
   constructor(
@@ -3952,8 +4129,8 @@ export class ApiError extends Error {
     message: string,
     public details?: Record<string, any>
   ) {
-    super(message);
-    this.name = 'ApiError';
+    super(message)
+    this.name = 'ApiError'
   }
 }
 
@@ -3972,11 +4149,11 @@ export function createErrorResponse(
       },
     },
     { status }
-  );
+  )
 }
 
 export function handleApiError(error: any): NextResponse {
-  console.error('API Error:', error);
+  console.error('API Error:', error)
 
   if (error instanceof ApiError) {
     const statusMap = {
@@ -3987,9 +4164,9 @@ export function handleApiError(error: any): NextResponse {
       [ErrorCode.RATE_LIMIT_EXCEEDED]: 429,
       [ErrorCode.EXTERNAL_SERVICE_ERROR]: 502,
       [ErrorCode.INTERNAL_ERROR]: 500,
-    };
+    }
 
-    return createErrorResponse(error, statusMap[error.code] || 500);
+    return createErrorResponse(error, statusMap[error.code] || 500)
   }
 
   if (error.code === 'PGRST116') {
@@ -3997,20 +4174,21 @@ export function handleApiError(error: any): NextResponse {
     return createErrorResponse(
       new ApiError(ErrorCode.NOT_FOUND, 'Resource not found'),
       404
-    );
+    )
   }
 
   // 默认内部服务器错误
   return createErrorResponse(
     new ApiError(ErrorCode.INTERNAL_ERROR, 'Internal server error'),
     500
-  );
+  )
 }
 ```
 
 ## 19. Monitoring
 
 ### Monitoring Stack
+
 - **Frontend Monitoring:** Vercel Analytics + Sentry
 - **Backend Monitoring:** Vercel Functions Logs + Sentry
 - **Error Tracking:** Sentry (前端和后端)
@@ -4021,6 +4199,7 @@ export function handleApiError(error: any): NextResponse {
 ### Key Metrics
 
 **Frontend Metrics:**
+
 - Core Web Vitals (LCP, FID, CLS)
 - JavaScript错误率
 - API响应时间
@@ -4028,6 +4207,7 @@ export function handleApiError(error: any): NextResponse {
 - 页面加载时间
 
 **Backend Metrics:**
+
 - 请求速率和响应时间
 - 错误率和错误类型分布
 - 数据库查询性能

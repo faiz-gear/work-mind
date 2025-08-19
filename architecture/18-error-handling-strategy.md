@@ -1,6 +1,7 @@
 # 18. Error Handling Strategy
 
 ## Error Flow
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -22,16 +23,17 @@ sequenceDiagram
 ```
 
 ## Error Response Format
+
 ```typescript
 // src/types/error.types.ts
 interface ApiError {
   error: {
-    code: string;
-    message: string;
-    details?: Record<string, any>;
-    timestamp: string;
-    requestId: string;
-  };
+    code: string
+    message: string
+    details?: Record<string, any>
+    timestamp: string
+    requestId: string
+  }
 }
 
 // 错误代码枚举
@@ -47,68 +49,70 @@ export enum ErrorCode {
 ```
 
 ## Frontend Error Handler
+
 ```typescript
 // src/lib/error-handler.ts
-import { toast } from '@/components/ui/toaster';
+import { toast } from '@/components/ui/toaster'
 
 export class ErrorHandler {
   static handleApiError(error: any) {
     if (error.response?.data?.error) {
-      const apiError = error.response.data.error;
-      
+      const apiError = error.response.data.error
+
       switch (apiError.code) {
         case 'VALIDATION_ERROR':
-          toast.error('输入数据格式错误');
-          break;
+          toast.error('输入数据格式错误')
+          break
         case 'AUTHENTICATION_ERROR':
-          toast.error('请先登录');
+          toast.error('请先登录')
           // 重定向到登录页
-          window.location.href = '/auth/login';
-          break;
+          window.location.href = '/auth/login'
+          break
         case 'AUTHORIZATION_ERROR':
-          toast.error('权限不足');
-          break;
+          toast.error('权限不足')
+          break
         case 'NOT_FOUND':
-          toast.error('资源不存在');
-          break;
+          toast.error('资源不存在')
+          break
         case 'RATE_LIMIT_EXCEEDED':
-          toast.error('请求过于频繁，请稍后再试');
-          break;
+          toast.error('请求过于频繁，请稍后再试')
+          break
         case 'EXTERNAL_SERVICE_ERROR':
-          toast.error('外部服务暂时不可用');
-          break;
+          toast.error('外部服务暂时不可用')
+          break
         default:
-          toast.error('操作失败，请稍后再试');
+          toast.error('操作失败，请稍后再试')
       }
     } else {
-      toast.error('网络错误，请检查连接');
+      toast.error('网络错误，请检查连接')
     }
-    
+
     // 发送错误到监控服务
-    this.logError(error);
+    this.logError(error)
   }
 
   static handleUnexpectedError(error: any) {
-    console.error('Unexpected error:', error);
-    toast.error('发生未知错误');
-    this.logError(error);
+    console.error('Unexpected error:', error)
+    toast.error('发生未知错误')
+    this.logError(error)
   }
 
   private static logError(error: any) {
     // 发送到错误监控服务
     if (process.env.NODE_ENV === 'production') {
       // Sentry或其他错误监控服务
-      console.log('Error logged to monitoring service:', error);
+      console.log('Error logged to monitoring service:', error)
     }
   }
 }
 ```
 
 ## Backend Error Handler
+
 ```typescript
 // src/lib/error-handler.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { ErrorCode } from '@/types/error.types';
+import { NextRequest, NextResponse } from 'next/server'
+import { ErrorCode } from '@/types/error.types'
 
 export class ApiError extends Error {
   constructor(
@@ -116,8 +120,8 @@ export class ApiError extends Error {
     message: string,
     public details?: Record<string, any>
   ) {
-    super(message);
-    this.name = 'ApiError';
+    super(message)
+    this.name = 'ApiError'
   }
 }
 
@@ -136,11 +140,11 @@ export function createErrorResponse(
       },
     },
     { status }
-  );
+  )
 }
 
 export function handleApiError(error: any): NextResponse {
-  console.error('API Error:', error);
+  console.error('API Error:', error)
 
   if (error instanceof ApiError) {
     const statusMap = {
@@ -151,9 +155,9 @@ export function handleApiError(error: any): NextResponse {
       [ErrorCode.RATE_LIMIT_EXCEEDED]: 429,
       [ErrorCode.EXTERNAL_SERVICE_ERROR]: 502,
       [ErrorCode.INTERNAL_ERROR]: 500,
-    };
+    }
 
-    return createErrorResponse(error, statusMap[error.code] || 500);
+    return createErrorResponse(error, statusMap[error.code] || 500)
   }
 
   if (error.code === 'PGRST116') {
@@ -161,13 +165,13 @@ export function handleApiError(error: any): NextResponse {
     return createErrorResponse(
       new ApiError(ErrorCode.NOT_FOUND, 'Resource not found'),
       404
-    );
+    )
   }
 
   // 默认内部服务器错误
   return createErrorResponse(
     new ApiError(ErrorCode.INTERNAL_ERROR, 'Internal server error'),
     500
-  );
+  )
 }
 ```

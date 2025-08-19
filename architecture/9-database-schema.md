@@ -212,7 +212,7 @@ CREATE POLICY "Users can delete own sessions" ON user_sessions FOR DELETE USING 
 
 -- 创建视图以简化查询
 CREATE VIEW work_record_details AS
-SELECT 
+SELECT
     wr.id,
     wr.user_id,
     wr.title,
@@ -228,7 +228,7 @@ FROM work_records wr
 JOIN users u ON wr.user_id = u.id;
 
 CREATE VIEW summary_details AS
-SELECT 
+SELECT
     s.id,
     s.user_id,
     s.work_record_ids,
@@ -257,16 +257,16 @@ RETURNS TABLE(
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         COUNT(*)::BIGINT,
         SUM(LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1)::BIGINT,
         AVG(LENGTH(content) - LENGTH(REPLACE(content, ' ', '')) + 1)::DECIMAL,
         ARRAY(
-            SELECT tag 
+            SELECT tag
             FROM (
-                SELECT UNNEST(tags) as tag, COUNT(*) 
-                FROM work_records 
-                WHERE user_id = p_user_id 
+                SELECT UNNEST(tags) as tag, COUNT(*)
+                FROM work_records
+                WHERE user_id = p_user_id
                 AND created_at >= NOW() - p_period
                 GROUP BY tag
                 ORDER BY COUNT(*) DESC
@@ -274,8 +274,8 @@ BEGIN
             ) t
         ),
         COUNT(*)::DECIMAL / EXTRACT(DAY FROM p_period)
-    FROM work_records 
-    WHERE user_id = p_user_id 
+    FROM work_records
+    WHERE user_id = p_user_id
     AND created_at >= NOW() - p_period;
 END;
 $$ LANGUAGE plpgsql;
@@ -286,7 +286,7 @@ RETURNS VOID AS $$
 BEGIN
     -- 重置所有标签的计数
     UPDATE tags SET usage_count = 0;
-    
+
     -- 重新计算每个标签的使用次数
     UPDATE tags t
     SET usage_count = COALESCE(tag_counts.count, 0)

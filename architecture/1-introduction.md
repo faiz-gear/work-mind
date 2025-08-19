@@ -5,9 +5,11 @@ This document outlines the complete fullstack architecture for 智能工作记�
 This unified approach combines what would traditionally be separate backend and frontend architecture documents, streamlining the development process for modern fullstack applications where these concerns are increasingly intertwined.
 
 ## Starter Template or Existing Project
+
 N/A - Greenfield project
 
 ## Change Log
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| [Current Date] | 1.0 | Initial fullstack architecture creation | Winston (Architect) |
+
+| Date           | Version | Description                             | Author              |
+| -------------- | ------- | --------------------------------------- | ------------------- |
+| [Current Date] | 1.0     | Initial fullstack architecture creation | Winston (Architect) |

@@ -3,6 +3,7 @@
 ## Component Architecture
 
 ### Component Organization
+
 ```
 src/
 ├── app/                    # Next.js App Router目录
@@ -143,6 +144,7 @@ src/
 ```
 
 ### Component Template
+
 ```typescript
 // src/components/features/work-record/work-record-item.tsx
 'use client';
@@ -189,11 +191,11 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
               {formatDistanceToNow(new Date(workRecord.created_at))}
             </Text>
           </HStack>
-          
+
           <Text fontSize="sm" color="gray.600" noOfLines={2}>
             {workRecord.content}
           </Text>
-          
+
           {workRecord.tags.length > 0 && (
             <HStack spacing={1} flexWrap="wrap">
               {workRecord.tags.map((tag, index) => (
@@ -210,7 +212,7 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
               ))}
             </HStack>
           )}
-          
+
           <HStack spacing={2}>
             {onView && (
               <IconButton
@@ -251,22 +253,23 @@ export const WorkRecordItem: React.FC<WorkRecordItemProps> = ({
 ## State Management Architecture
 
 ### State Structure
+
 ```typescript
 // src/stores/auth.store.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { User, AuthSession } from '@/types/api.types';
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { User, AuthSession } from '@/types/api.types'
 
 interface AuthState {
-  user: User | null;
-  session: AuthSession | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => Promise<void>;
-  refreshSession: () => Promise<void>;
-  updateUser: (userData: Partial<User>) => Promise<void>;
+  user: User | null
+  session: AuthSession | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, name: string) => Promise<void>
+  logout: () => Promise<void>
+  refreshSession: () => Promise<void>
+  updateUser: (userData: Partial<User>) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -278,92 +281,93 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
 
       login: async (email: string, password: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          const response = await authApi.login({ email, password });
+          const response = await authApi.login({ email, password })
           set({
             user: response.user,
             session: response.session,
             isAuthenticated: true,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       register: async (email: string, password: string, name: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          const response = await authApi.register({ email, password, name });
+          const response = await authApi.register({ email, password, name })
           set({
             user: response.user,
             session: response.session,
             isAuthenticated: true,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       logout: async () => {
-        set({ isLoading: true });
+        set({ isLoading: true })
         try {
-          await authApi.logout();
+          await authApi.logout()
           set({
             user: null,
             session: null,
             isAuthenticated: false,
-            isLoading: false
-          });
+            isLoading: false,
+          })
         } catch (error) {
-          set({ isLoading: false });
-          throw error;
+          set({ isLoading: false })
+          throw error
         }
       },
 
       refreshSession: async () => {
         try {
-          const response = await authApi.refreshSession();
+          const response = await authApi.refreshSession()
           set({
             user: response.user,
             session: response.session,
-            isAuthenticated: true
-          });
+            isAuthenticated: true,
+          })
         } catch (error) {
           set({
             user: null,
             session: null,
-            isAuthenticated: false
-          });
+            isAuthenticated: false,
+          })
         }
       },
 
       updateUser: async (userData: Partial<User>) => {
         try {
-          const updatedUser = await authApi.updateUser(userData);
-          set({ user: updatedUser });
+          const updatedUser = await authApi.updateUser(userData)
+          set({ user: updatedUser })
         } catch (error) {
-          throw error;
+          throw error
         }
-      }
+      },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         user: state.user,
         session: state.session,
-        isAuthenticated: state.isAuthenticated
-      })
+        isAuthenticated: state.isAuthenticated,
+      }),
     }
   )
-);
+)
 ```
 
 ### State Management Patterns
+
 - **Zustand for Client State:** 轻量级状态管理，支持持久化和中间件
 - **React Query for Server State:** 处理API数据获取、缓存和同步
 - **Local State for Component State:** 使用useState和useContext管理组件内部状态
@@ -373,6 +377,7 @@ export const useAuthStore = create<AuthState>()(
 ## Routing Architecture (App Router)
 
 ### Route Organization
+
 ```typescript
 // src/app/layout.tsx (根布局)
 import { Inter } from 'next/font/google';
@@ -427,7 +432,7 @@ export default async function DashboardLayout({
 }) {
   const supabase = createServerComponentClient({ cookies });
   const { data: { session } } = await supabase.auth.getSession();
-  
+
   if (!session) {
     redirect('/auth/login');
   }
@@ -452,6 +457,7 @@ export default function SettingsLayout({
 ```
 
 ### Protected Route Pattern (App Router)
+
 ```typescript
 // src/components/auth/protected-route.tsx
 'use client';
@@ -486,7 +492,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         await refreshSession();
       }
     };
-    
+
     checkAuth();
   }, [isAuthenticated, isLoading, refreshSession]);
 
@@ -522,13 +528,14 @@ export default function DashboardPage() {
 ## Frontend Services Layer
 
 ### API Client Setup
+
 ```typescript
 // src/services/api-client.ts
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { useAuthStore } from '@/stores/auth.store';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { useAuthStore } from '@/stores/auth.store'
 
 class ApiClient {
-  private instance: AxiosInstance;
+  private instance: AxiosInstance
 
   constructor() {
     this.instance = axios.create({
@@ -537,80 +544,93 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    })
 
-    this.setupInterceptors();
+    this.setupInterceptors()
   }
 
   private setupInterceptors() {
     // Request interceptor to add auth token
     this.instance.interceptors.request.use(
       (config: AxiosRequestConfig) => {
-        const token = useAuthStore.getState().session?.access_token;
+        const token = useAuthStore.getState().session?.access_token
         if (token) {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `Bearer ${token}`;
+          config.headers = config.headers || {}
+          config.headers.Authorization = `Bearer ${token}`
         }
-        return config;
+        return config
       },
-      (error) => Promise.reject(error)
-    );
+      error => Promise.reject(error)
+    )
 
     // Response interceptor to handle auth errors
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
-      async (error) => {
-        const originalRequest = error.config;
+      async error => {
+        const originalRequest = error.config
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          
+          originalRequest._retry = true
+
           try {
-            await useAuthStore.getState().refreshSession();
-            const newToken = useAuthStore.getState().session?.access_token;
-            
+            await useAuthStore.getState().refreshSession()
+            const newToken = useAuthStore.getState().session?.access_token
+
             if (newToken) {
-              originalRequest.headers.Authorization = `Bearer ${newToken}`;
-              return this.instance(originalRequest);
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+              return this.instance(originalRequest)
             }
           } catch (refreshError) {
-            useAuthStore.getState().logout();
-            window.location.href = '/auth/login';
-            return Promise.reject(refreshError);
+            useAuthStore.getState().logout()
+            window.location.href = '/auth/login'
+            return Promise.reject(refreshError)
           }
         }
 
-        return Promise.reject(error);
+        return Promise.reject(error)
       }
-    );
+    )
   }
 
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.get(url, config).then(response => response.data);
+    return this.instance.get(url, config).then(response => response.data)
   }
 
-  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.post(url, data, config).then(response => response.data);
+  post<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.instance.post(url, data, config).then(response => response.data)
   }
 
-  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.put(url, data, config).then(response => response.data);
+  put<T = any>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.instance.put(url, data, config).then(response => response.data)
   }
 
   delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return this.instance.delete(url, config).then(response => response.data);
+    return this.instance.delete(url, config).then(response => response.data)
   }
 }
 
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient()
 ```
 
 ### Service Example
+
 ```typescript
 // src/services/work-record.service.ts
-import { apiClient } from './api-client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WorkRecord, CreateWorkRecord, UpdateWorkRecord } from '@/types/api.types';
+import { apiClient } from './api-client'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  WorkRecord,
+  CreateWorkRecord,
+  UpdateWorkRecord,
+} from '@/types/api.types'
 
 export const workRecordKeys = {
   all: ['work-records'] as const,
@@ -618,82 +638,86 @@ export const workRecordKeys = {
   list: (filters: any) => [...workRecordKeys.lists(), { filters }] as const,
   details: () => [...workRecordKeys.all, 'detail'] as const,
   detail: (id: string) => [...workRecordKeys.details(), id] as const,
-};
+}
 
 export const workRecordApi = {
   getWorkRecords: (params?: {
-    page?: number;
-    limit?: number;
-    tags?: string;
-    date_from?: string;
-    date_to?: string;
-    search?: string;
+    page?: number
+    limit?: number
+    tags?: string
+    date_from?: string
+    date_to?: string
+    search?: string
   }) => apiClient.get<WorkRecord[]>('/work-records', { params }),
-  
-  getWorkRecord: (id: string) => apiClient.get<WorkRecord>(`/work-records/${id}`),
-  
-  createWorkRecord: (data: CreateWorkRecord) => apiClient.post<WorkRecord>('/work-records', data),
-  
-  updateWorkRecord: (id: string, data: UpdateWorkRecord) => apiClient.put<WorkRecord>(`/work-records/${id}`, data),
-  
+
+  getWorkRecord: (id: string) =>
+    apiClient.get<WorkRecord>(`/work-records/${id}`),
+
+  createWorkRecord: (data: CreateWorkRecord) =>
+    apiClient.post<WorkRecord>('/work-records', data),
+
+  updateWorkRecord: (id: string, data: UpdateWorkRecord) =>
+    apiClient.put<WorkRecord>(`/work-records/${id}`, data),
+
   deleteWorkRecord: (id: string) => apiClient.delete(`/work-records/${id}`),
-};
+}
 
 export const useWorkRecords = (params?: any) => {
   return useQuery({
     queryKey: workRecordKeys.list(params),
     queryFn: () => workRecordApi.getWorkRecords(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
+  })
+}
 
 export const useWorkRecord = (id: string) => {
   return useQuery({
     queryKey: workRecordKeys.detail(id),
     queryFn: () => workRecordApi.getWorkRecord(id),
     enabled: !!id,
-  });
-};
+  })
+}
 
 export const useCreateWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: workRecordApi.createWorkRecord,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.setQueryData(workRecordKeys.detail(data.id), data);
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.setQueryData(workRecordKeys.detail(data.id), data)
     },
-  });
-};
+  })
+}
 
 export const useUpdateWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateWorkRecord }) => 
+    mutationFn: ({ id, data }: { id: string; data: UpdateWorkRecord }) =>
       workRecordApi.updateWorkRecord(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.setQueryData(workRecordKeys.detail(data.id), data);
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.setQueryData(workRecordKeys.detail(data.id), data)
     },
-  });
-};
+  })
+}
 
 export const useDeleteWorkRecord = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: workRecordApi.deleteWorkRecord,
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() });
-      queryClient.removeQueries({ queryKey: workRecordKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: workRecordKeys.lists() })
+      queryClient.removeQueries({ queryKey: workRecordKeys.detail(id) })
     },
-  });
-};
+  })
+}
 ```
 
 ## Providers Setup (App Router)
+
 ```typescript
 // src/components/providers/index.tsx
 'use client';

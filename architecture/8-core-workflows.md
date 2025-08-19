@@ -1,6 +1,7 @@
 # 8. Core Workflows
 
 ## Workflow 1: User Registration and Login
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -37,6 +38,7 @@ sequenceDiagram
 ```
 
 ## Workflow 2: Creating a Work Record
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -76,6 +78,7 @@ sequenceDiagram
 ```
 
 ## Workflow 3: Generating AI Summary
+
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -120,6 +123,7 @@ sequenceDiagram
 ```
 
 ## Workflow 4: Real-time Data Synchronization
+
 ```mermaid
 sequenceDiagram
     participant F1 as Frontend Device 1
@@ -152,6 +156,7 @@ sequenceDiagram
 ```
 
 ## Workflow 5: Data Export
+
 ```mermaid
 sequenceDiagram
     participant U as User

@@ -181,23 +181,35 @@ export class TaskService {
 
 // src/services/summaryService.ts
 export class SummaryService {
-  constructor(private taskRepository: TaskRepository, private aiService: AIService) {}
+  constructor(
+    private taskRepository: TaskRepository,
+    private aiService: AIService
+  ) {}
 
   async generateSummary(type: SummaryType, date: Date): Promise<Summary>
 }
 
 // src/services/agentService.ts
 export class AgentService {
-  constructor(private taskRepository: TaskRepository, private aiService: AIService) {}
+  constructor(
+    private taskRepository: TaskRepository,
+    private aiService: AIService
+  ) {}
 
-  async getSuggestions(userId: string, context?: AgentContext): Promise<Suggestion[]>
+  async getSuggestions(
+    userId: string,
+    context?: AgentContext
+  ): Promise<Suggestion[]>
 }
 
 // src/services/aiService.ts (使用 Vercel AI SDK)
 export class AIService {
   constructor(private openai: OpenAI) {}
 
-  async generateCompletion(prompt: string, options?: CompletionOptions): Promise<string>
+  async generateCompletion(
+    prompt: string,
+    options?: CompletionOptions
+  ): Promise<string>
   async streamChat(messages: Message[]): Promise<ReadableStream>
   async generateSummary(tasks: Task[], type: SummaryType): Promise<string>
   async generateSuggestions(context: AgentContext): Promise<Suggestion[]>
@@ -224,47 +236,39 @@ export class TaskRepository {
 ## 7. 实现步骤与文件结构
 
 1. **初始化项目**
-
    - `npx create-next-app@latest --typescript --app`
    - 安装依赖：`daisyui`, `tailwindcss`, `prisma`, `@prisma/client`, `@tanstack/react-query`, `ai`, `@ai-sdk/openai`, `next-i18next` 等
 
 2. **配置 Tailwind & daisyUI (紧凑布局)**
-
    - 更新 `tailwind.config.js`
    - 配置 daisyUI 主题，设置默认 size 为 sm
    - 自定义紧凑布局的 spacing 配置
 
 3. **React Query 状态管理配置**
-
    - 配置 QueryClient 和 QueryClientProvider
    - 设置缓存策略和错误处理
    - 创建自定义 hooks 封装 API 调用
 
 4. **国际化集成**
-
    - 配置 `next-i18next.config.js`
    - 创建 `public/locales/{en,zh}/common.json`
 
 5. **数据库 & ORM**
-
    - 编写 `schema.prisma`
    - 运行 `npx prisma migrate dev`
 
 6. **后端分层架构搭建**
-
    - 创建 Repository Layer (数据访问层)
    - 创建 Service Layer (业务逻辑层)
    - 创建 Controller Layer (API 路由层)
    - 实现依赖注入和错误处理
 
 7. **前端组件开发 (紧凑设计)**
-
    - 搭建基本布局与导航 (使用 daisyUI sm size)
    - 实现任务列表与 CRUD (紧凑布局)
    - 集成 React Query 进行数据管理
 
 8. **AI 接口集成 (使用 Vercel AI SDK)**
-
    - 在 Service Layer 中集成 Vercel AI SDK
    - 实现流式响应和文本补全功能
    - 配置 AI 路由使用 Vercel AI SDK 的标准模式
@@ -272,18 +276,15 @@ export class TaskRepository {
    - 通过 Repository 层访问历史数据
 
 9. **可视化与报告**
-
    - 使用 Recharts 绘制时间趋势图、饼图等
    - 实现紧凑的图表布局
 
 10. **Agent 模块**
-
     - 开发 AgentService 业务逻辑
     - 利用历史数据 & AI 生成预测与建议
     - 通过 React Query 管理 AI 响应缓存
 
 11. **测试 & 部署**
-
     - 单元测试 (Jest)
     - API 层测试
     - 部署到 Vercel / Netlify
@@ -367,7 +368,7 @@ export async function POST(req: Request) {
 
   const result = await streamText({
     model: openai('gpt-4'),
-    messages
+    messages,
   })
 
   return result.toAIStreamResponse()
@@ -383,7 +384,7 @@ export async function POST(req: Request) {
   const { text } = await generateText({
     model: openai('gpt-4'),
     prompt,
-    ...options
+    ...options,
   })
 
   return Response.json({ text })
@@ -404,7 +405,7 @@ export class AIService {
     const { text } = await generateText({
       model: openai('gpt-4'),
       prompt,
-      temperature: 0.7
+      temperature: 0.7,
     })
 
     return text
@@ -413,7 +414,7 @@ export class AIService {
   async streamChat(messages: Message[]): Promise<ReadableStream> {
     const result = await streamText({
       model: openai('gpt-4'),
-      messages
+      messages,
     })
 
     return result.textStream

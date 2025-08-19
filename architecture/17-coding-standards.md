@@ -1,6 +1,7 @@
 # 17. Coding Standards
 
 ## Critical Fullstack Rules
+
 - **Type Sharing:** 始终在 `packages/shared` 中定义类型并从那里导入
 - **API Calls:** 绝不直接进行HTTP调用 - 使用服务层
 - **Environment Variables:** 只通过配置对象访问，绝不直接使用 process.env
@@ -13,14 +14,14 @@
 
 ## Naming Conventions
 
-| Element | Frontend | Backend | Example |
-|----------|-----------|----------|---------|
-| Components | PascalCase | - | `UserProfile.tsx` |
-| Hooks | camelCase with 'use' | - | `useAuth.ts` |
-| API Routes | - | kebab-case | `/api/user-profile` |
-| Database Tables | - | snake_case | `user_profiles` |
-| Functions | camelCase | camelCase | `getUserProfile()` |
-| Variables | camelCase | snake_case | `userName` / `user_name` |
-| Constants | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `API_BASE_URL` |
-| Interfaces | PascalCase | PascalCase | `UserProfile` |
-| Types | PascalCase | PascalCase | `WorkRecord` |
+| Element         | Frontend             | Backend              | Example                  |
+| --------------- | -------------------- | -------------------- | ------------------------ |
+| Components      | PascalCase           | -                    | `UserProfile.tsx`        |
+| Hooks           | camelCase with 'use' | -                    | `useAuth.ts`             |
+| API Routes      | -                    | kebab-case           | `/api/user-profile`      |
+| Database Tables | -                    | snake_case           | `user_profiles`          |
+| Functions       | camelCase            | camelCase            | `getUserProfile()`       |
+| Variables       | camelCase            | snake_case           | `userName` / `user_name` |
+| Constants       | SCREAMING_SNAKE_CASE | SCREAMING_SNAKE_CASE | `API_BASE_URL`           |
+| Interfaces      | PascalCase           | PascalCase           | `UserProfile`            |
+| Types           | PascalCase           | PascalCase           | `WorkRecord`             |
