@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { ApiResponse } from '@/types/api.types'
 
 /**
@@ -7,7 +7,7 @@ import { ApiResponse } from '@/types/api.types'
  * POST /api/users - Create user (placeholder)
  */
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Placeholder implementation
     const response: ApiResponse = {
@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response)
   } catch (error) {
+    console.error('Users GET API error:', error)
     return NextResponse.json(
       {
         success: false,
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Placeholder implementation
     const response: ApiResponse = {
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(response, { status: 201 })
   } catch (error) {
+    console.error('Users POST API error:', error)
     return NextResponse.json(
       {
         success: false,
